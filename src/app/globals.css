@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  --color-azure: #007fff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-azure: #007fff;
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-display: var(--font-outfit), sans-serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
+
+/* OJEE Bento Dashboard Cockpit Styles */
+.cockpit-container {
+  --accent-color: rgba(0, 127, 255, 1);
+  --card-bg: rgba(10, 10, 10, 0.6);
+  --border-color: rgba(255, 255, 255, 0.05);
+}
+
+.cockpit-container .bento-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+  padding: 0.75rem;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.cockpit-container .bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cockpit-container .bento-card h3 {
+  font-size: 0.95rem;
+}
+
+.cockpit-container .bento-card .text-xs {
+  font-size: 0.7rem;
+}
+
+.cockpit-container .text-azure-dynamic {
+  color: var(--accent-color);
+}
+
+.cockpit-container .bg-azure-dynamic {
+  background-color: var(--accent-color);
+}
+
+.cockpit-container .border-azure-dynamic {
+  border-color: var(--accent-color);
+}
+
+/* Mechanical Blueprint Accents (Variant 1 Accept) */
+.mechanical-crosshair {
+  position: absolute;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  color: rgba(0, 127, 255, 0.4);
+  user-select: none;
+}
+
+.coord-marker {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 8px;
+  color: rgba(0, 127, 255, 0.5);
+}
+
+.label-marker {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 7px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+
+
