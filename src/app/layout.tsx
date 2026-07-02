@@ -28,7 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${outfit.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}{/* impeccable-live-start */}
-<script src="http://localhost:8401/live.js"></script>
+<script async src="http://localhost:8401/live.js"></script>
 {/* impeccable-live-end */}
 </body>
     </html>
