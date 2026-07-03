@@ -2,12 +2,67 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ChartJS from "chart.js/auto";
+import type { ChartConfiguration, TooltipItem } from "chart.js";
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-motion";
+
+const easeOutExpo = [0.16, 1, 0.3, 1] as const;
+const pressTransition = { type: "spring" as const, stiffness: 520, damping: 32 };
+
+const syllabusNodes = ["NCERT", "PYQs", "Modules", "Mock Tests"];
+const initialSyllabusItems = [
+  { subject: "Physics", topic: "Rotational Mechanics", sub: "Moment of Inertia, Angular Momentum", done: [true, false, false, true] },
+  { subject: "Maths", topic: "Matrices & Determinants", sub: "Cramer's Rule, Adjoint properties", done: [true, true, false, false] },
+  { subject: "Chemistry", topic: "Organic Chemistry GOC", sub: "Inductive & Resonance Effects", done: [true, true, true, false] }
+];
+
+type ReportMetric = "hours" | "weekly";
+type ReportChart = {
+  type: "line" | "bar";
+  labels: string[];
+  datasets: ChartConfiguration<"line" | "bar", number[], string>["data"]["datasets"];
+  max: number;
+  stacked: boolean;
+};
+
+function BentoCard({
+  children,
+  className,
+  index,
+  reduceMotion,
+}: {
+  children: React.ReactNode;
+  className: string;
+  index: number;
+  reduceMotion: boolean;
+}) {
+  return (
+    <motion.div
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }}
+      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: reduceMotion ? 0.15 : 0.55, delay: reduceMotion ? 0 : index * 0.055, ease: easeOutExpo }}
+      whileHover={reduceMotion ? undefined : { y: -4, scale: 1.01, borderColor: "rgba(0, 127, 255, 0.38)" }}
+      className={`${className} overflow-hidden`}
+    >
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-azure/70 to-transparent"
+        initial={{ x: "-100%", opacity: 0 }}
+        whileHover={reduceMotion ? undefined : { x: "100%", opacity: [0, 1, 0] }}
+        transition={{ duration: 0.8, ease: easeOutExpo }}
+      />
+      {children}
+    </motion.div>
+  );
+}
 
 export default function BentoGrid() {
   // Cockpit States
+  const reduceMotion = useReducedMotion() ?? false;
   const [clockMode, setClockMode] = useState<"pomo" | "stopwatch" | "custom">("pomo");
   const [clockTime, setClockTime] = useState("25:00");
   const [isClockRunning, setIsClockRunning] = useState(false);
+  const [syllabusItems, setSyllabusItems] = useState(initialSyllabusItems);
   const [plannerTasks, setPlannerTasks] = useState([
     { id: 1, text: "Solve 15 Maths Matrices PYQs", done: true },
     { id: 2, text: "Read Electrostatics NCERT Capacitor theory", done: false },
@@ -26,9 +81,19 @@ export default function BentoGrid() {
   const [aiInput, setAiInput] = useState("");
 
   // Daily Reports State
-  const [reportMetric, setReportMetric] = useState<"hours" | "weekly">("hours");
+  const [reportMetric, setReportMetric] = useState<ReportMetric>("hours");
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstanceRef = useRef<ChartJS | null>(null);
+
+  const toggleSyllabusNode = (itemIndex: number, nodeIndex: number) => {
+    setSyllabusItems((prev) =>
+      prev.map((item, idx) =>
+        idx === itemIndex
+          ? { ...item, done: item.done.map((done, nIdx) => (nIdx === nodeIndex ? !done : done)) }
+          : item
+      )
+    );
+  };
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -44,7 +109,7 @@ export default function BentoGrid() {
     gradient.addColorStop(0, "rgba(0, 127, 255, 0.25)");
     gradient.addColorStop(1, "rgba(0, 127, 255, 0.0)");
 
-    const dataMap: any = {
+    const dataMap: Record<ReportMetric, ReportChart> = {
       hours: {
         type: "line",
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -67,7 +132,6 @@ export default function BentoGrid() {
           }
         ],
         max: 14,
-        unit: "h",
         stacked: false
       },
       weekly: {
@@ -94,7 +158,6 @@ export default function BentoGrid() {
           }
         ],
         max: 14,
-        unit: "h",
         stacked: true
       }
     };
@@ -148,7 +211,7 @@ export default function BentoGrid() {
                 family: "monospace",
                 size: 9
               },
-              callback: (val: any) => `${val}h`
+              callback: (val: string | number) => `${val}h`
             },
             border: {
               display: false
@@ -180,10 +243,10 @@ export default function BentoGrid() {
             padding: 8,
             displayColors: currentData.stacked,
             callbacks: {
-              label: (context: any) => `${context.dataset.label}: ${context.parsed.y}h`
+              label: (context: TooltipItem<"line" | "bar">) => `${context.dataset.label}: ${context.parsed.y}h`
             }
           }
-        } as any
+        }
       }
     });
 
@@ -243,10 +306,21 @@ export default function BentoGrid() {
   }, [isClockRunning, clockMode]);
 
   return (
-    <div className="relative cockpit-container">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-[1px] bg-white/[0.08] border border-white/[0.08] rounded-xl overflow-hidden">
+    <MotionConfig reducedMotion={reduceMotion ? "always" : "never"} transition={{ ease: easeOutExpo }}>
+      <motion.div
+        className="relative cockpit-container"
+        initial={reduceMotion ? false : { opacity: 0.8 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.15 }}
+      >
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-[1px] bg-white/[0.08] border border-white/[0.08] rounded-xl overflow-hidden"
+          initial={reduceMotion ? false : "hidden"}
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+        >
         {/* Syllabus Tracker */}
-        <div className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={0} reduceMotion={reduceMotion} className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] border border-white/10 rounded-lg transition-colors duration-300">
           <div className="flex justify-between items-center border-b border-white/5 pb-3.5">
             <div>
               <span className="text-xs font-semibold uppercase tracking-widest text-white/40">Granular Syllabus Matrix</span>
@@ -255,12 +329,14 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex flex-col gap-3 my-4">
-            {[
-              { subject: "Physics", topic: "Rotational Mechanics", sub: "Moment of Inertia, Angular Momentum", done: [true, false, false, true] },
-              { subject: "Maths", topic: "Matrices & Determinants", sub: "Cramer's Rule, Adjoint properties", done: [true, true, false, false] },
-              { subject: "Chemistry", topic: "Organic Chemistry GOC", sub: "Inductive & Resonance Effects", done: [true, true, true, false] }
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-white/5 bg-white/[0.01] hover:border-white/10 transition-colors gap-3">
+            {syllabusItems.map((item, idx) => (
+              <motion.div
+                key={item.topic}
+                layout
+                whileHover={reduceMotion ? undefined : { x: 4, backgroundColor: "rgba(255,255,255,0.035)" }}
+                transition={pressTransition}
+                className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-white/5 bg-white/[0.01] hover:border-white/10 transition-colors gap-3"
+              >
                 <div className="flex flex-col flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] uppercase tracking-wider font-mono text-azure-dynamic font-semibold">{item.subject}</span>
@@ -269,37 +345,61 @@ export default function BentoGrid() {
                   <span className="text-[10px] text-white/50 mt-0.5">{item.sub}</span>
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5">
-                  {["NCERT", "PYQs", "Modules", "Mock Tests"].map((node, nIdx) => (
-                    <button 
+                  {syllabusNodes.map((node, nIdx) => (
+                    <motion.button
                       key={nIdx}
+                      type="button"
+                      layout
+                      whileHover={reduceMotion ? undefined : { scale: 1.06 }}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={() => toggleSyllabusNode(idx, nIdx)}
+                      transition={pressTransition}
                       className={`px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider ${
                         item.done[nIdx] 
                           ? "bg-azure/80 border-azure/80 text-white" 
                           : "border-white/10 text-white/40 hover:border-white/20 hover:text-white"
                       }`}
                     >
+                      <AnimatePresence initial={false} mode="popLayout">
+                        {item.done[nIdx] && (
+                          <motion.span
+                            key="spark"
+                            aria-hidden="true"
+                            initial={{ scale: 0, opacity: 0, rotate: -45 }}
+                            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            className="mr-1 inline-block"
+                          >
+                            ✓
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                       {node}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
             <span>Track daily syllabus milestones.</span>
-            <button className="text-azure hover:underline font-semibold flex items-center gap-1">
+            <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1">
               + Add Custom Topic
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </BentoCard>
 
         {/* Study Clock Engine */}
-        <div className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={1} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div className="flex justify-between items-start">
             <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Study Clock Engine</span>
             <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-azure-dynamic opacity-75"></span>
+              <motion.span
+                className="absolute inline-flex h-full w-full rounded-full bg-azure-dynamic"
+                animate={isClockRunning && !reduceMotion ? { scale: [1, 2.4], opacity: [0.7, 0] } : { scale: 1, opacity: 0.25 }}
+                transition={{ duration: 1.2, repeat: isClockRunning ? Infinity : 0, ease: easeOutExpo }}
+              />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-azure-dynamic"></span>
             </span>
           </div>
@@ -307,61 +407,95 @@ export default function BentoGrid() {
           <div className="flex flex-col items-center py-2">
             <div className="flex rounded bg-white/5 p-0.5 text-[10px] font-semibold border border-white/10 mb-4 z-10">
               {(["pomo", "stopwatch", "custom"] as const).map((mode) => (
-                <button 
+                <motion.button
                   key={mode} 
                   onClick={() => {
                     setClockMode(mode);
                     setClockTime(mode === "pomo" ? "25:00" : mode === "stopwatch" ? "00:00:00" : "45:00");
                   }}
-                  className={`px-3 py-1 rounded transition-all capitalize cursor-pointer ${clockMode === mode ? "bg-azure-dynamic text-white" : "text-white/60"}`}
+                  whileTap={{ scale: 0.94 }}
+                  className={`relative px-3 py-1 rounded capitalize cursor-pointer ${clockMode === mode ? "text-white" : "text-white/60"}`}
                 >
-                  {mode}
-                </button>
+                  {clockMode === mode && (
+                    <motion.span layoutId="clock-mode-pill" className="absolute inset-0 rounded bg-azure-dynamic" transition={pressTransition} />
+                  )}
+                  <span className="relative z-10">{mode}</span>
+                </motion.button>
               ))}
             </div>
 
-            <div className="text-4xl font-mono font-bold tracking-tight text-white mb-2">{clockTime}</div>
-            <span className="text-[10px] text-white/40 uppercase tracking-widest">{isClockRunning ? "Focus Session Active" : "Paused"}</span>
+            <motion.div
+              key={clockTime}
+              initial={reduceMotion ? { opacity: 0.7 } : { opacity: 0, y: -8, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              className="text-4xl font-mono font-bold tracking-tight text-white mb-2"
+            >
+              {clockTime}
+            </motion.div>
+            <motion.span
+              animate={{ color: isClockRunning ? "rgba(0,127,255,0.9)" : "rgba(255,255,255,0.4)" }}
+              className="text-[10px] uppercase tracking-widest"
+            >
+              {isClockRunning ? "Focus Session Active" : "Paused"}
+            </motion.span>
           </div>
 
           <div className="flex gap-2 w-full z-10">
-            <button 
+            <motion.button
               onClick={() => setIsClockRunning(!isClockRunning)}
+              whileHover={reduceMotion ? undefined : { scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
               className="flex-1 h-9 rounded bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all cursor-pointer"
             >
               {isClockRunning ? "Pause" : "Start"}
-            </button>
-            <button 
+            </motion.button>
+            <motion.button
               onClick={() => {
                 setIsClockRunning(false);
                 setClockTime(clockMode === "pomo" ? "25:00" : clockMode === "stopwatch" ? "00:00:00" : "45:00");
               }}
+              whileHover={reduceMotion ? undefined : { scale: 1.03, borderColor: "rgba(255,255,255,0.28)" }}
+              whileTap={{ scale: 0.95 }}
               className="px-3 h-9 rounded border border-white/10 text-xs text-white/60 hover:text-white transition-all cursor-pointer"
             >
               Reset
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </BentoCard>
 
         {/* Frictionless Weekly Planner */}
-        <div className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={2} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Frictionless Planner</span>
             <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Weekly Study Tasks</h3>
           </div>
 
           <div className="flex flex-col gap-2 my-3 max-h-[110px] overflow-y-auto pr-1">
-            {plannerTasks.map((t) => (
-              <div key={t.id} className="flex items-center gap-2 text-xs">
+            <AnimatePresence initial={false}>
+              {plannerTasks.map((t) => (
+              <motion.div
+                key={t.id}
+                layout
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -12, scale: 0.98 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 12, scale: 0.98 }}
+                className="flex items-center gap-2 text-xs"
+              >
                 <input 
                   type="checkbox" 
                   checked={t.done} 
                   onChange={() => setPlannerTasks(prev => prev.map(item => item.id === t.id ? { ...item, done: !item.done } : item))}
                   className="rounded border-white/20 bg-black text-azure-dynamic focus:ring-0 w-3.5 h-3.5"
                 />
-                <span className={`text-white/80 ${t.done ? "line-through text-white/40" : ""}`}>{t.text}</span>
-              </div>
-            ))}
+                <motion.span
+                  animate={{ opacity: t.done ? 0.45 : 0.85, x: t.done && !reduceMotion ? 3 : 0 }}
+                  className={t.done ? "line-through text-white/40" : "text-white/80"}
+                >
+                  {t.text}
+                </motion.span>
+              </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           <form 
@@ -380,27 +514,43 @@ export default function BentoGrid() {
               placeholder="> Add task to weekly planner..." 
               className="bg-transparent border-0 outline-none p-0 text-xs text-white placeholder-white/30 flex-1 ring-0 focus:ring-0"
             />
-            <button type="submit" className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-white">Add</button>
+            <motion.button type="submit" whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }} className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-white">Add</motion.button>
           </form>
-        </div>
+        </BentoCard>
 
         {/* Mock Score Log */}
-        <div className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={3} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Mock Test Scores</span>
             <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Scores Ledger</h3>
           </div>
 
           <div className="flex flex-col gap-2 my-2">
-            {mockLedger.slice(-2).map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs">
+            <AnimatePresence initial={false}>
+              {mockLedger.slice(-2).map((item) => (
+              <motion.div
+                key={`${item.name}-${item.date}-${item.score}`}
+                layout
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                whileHover={reduceMotion ? undefined : { x: 3, borderColor: "rgba(0,127,255,0.3)" }}
+                className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs"
+              >
                 <div className="flex flex-col">
                   <span className="font-semibold text-white/90">{item.name}</span>
                   <span className="text-[9px] text-white/40">{item.date}</span>
                 </div>
-                <span className="font-mono text-azure-dynamic font-bold">{item.score} / {item.max}</span>
-              </div>
-            ))}
+                <motion.span
+                  initial={reduceMotion ? false : { scale: 1.18, color: "#ffffff" }}
+                  animate={{ scale: 1, color: "#007fff" }}
+                  className="font-mono text-azure-dynamic font-bold"
+                >
+                  {item.score} / {item.max}
+                </motion.span>
+              </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           <form 
@@ -429,29 +579,42 @@ export default function BentoGrid() {
                 className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] text-white placeholder-white/30 w-16 outline-none"
               />
             </div>
-            <button type="submit" className="w-full h-7 rounded border border-white/20 hover:border-white/50 text-[10px] font-semibold text-white tracking-wider uppercase transition-colors">
+            <motion.button type="submit" whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "rgba(255,255,255,0.55)" }} whileTap={{ scale: 0.96 }} className="w-full h-7 rounded border border-white/20 hover:border-white/50 text-[10px] font-semibold text-white tracking-wider uppercase transition-colors">
               Log Mock Score
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </BentoCard>
 
         {/* AI IITian Planner Agent */}
-        <div className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={4} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-azure animate-pulse"></div>
+              <motion.div
+                className="w-2 h-2 rounded-full bg-azure"
+                animate={reduceMotion ? undefined : { scale: [1, 1.7, 1], opacity: [1, 0.55, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              />
               <span className="text-xs font-semibold uppercase tracking-wider text-white/40">BLUE AI</span>
             </div>
             <span className="text-[9px] text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono bg-emerald-500/10">API KEY ACTIVE</span>
           </div>
 
           <div className="flex flex-col gap-2 my-2 max-h-[110px] overflow-y-auto text-sm pr-1">
-            {aiChat.slice(-3).map((msg, idx) => (
-              <div key={idx} className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-white/5 text-white/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-white/90 self-end max-w-[90%]"}`}>
+            <AnimatePresence initial={false}>
+              {aiChat.slice(-3).map((msg, idx) => (
+              <motion.div
+                key={`${msg.sender}-${idx}-${msg.text}`}
+                layout
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: msg.sender === "agent" ? -14 : 14, filter: "blur(4px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-white/5 text-white/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-white/90 self-end max-w-[90%]"}`}
+              >
                 <span className="font-bold text-[12px] uppercase tracking-wider text-white/40">{msg.sender === "agent" ? "AI Planner" : "You"}</span>
                 <p className="leading-tight">{msg.text}</p>
-              </div>
-            ))}
+              </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           <form 
@@ -475,10 +638,10 @@ export default function BentoGrid() {
               className="bg-transparent border-0 outline-none p-0 text-xs text-white placeholder-white/30 flex-1 ring-0 focus:ring-0"
             />
           </form>
-        </div>
+        </BentoCard>
 
         {/* Daily Reports Page Widget */}
-        <div className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-[#000000] border border-white/10 rounded-lg">
+        <BentoCard index={5} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-[#000000] border border-white/10 rounded-lg">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">Study Progress Reports</span>
@@ -486,36 +649,44 @@ export default function BentoGrid() {
             </div>
             <div className="flex items-center gap-1 bg-white/5 border border-white/10 p-0.5 rounded text-[10px]">
               {(["hours", "weekly"] as const).map((metric) => (
-                <button
+                <motion.button
                   key={metric}
                   onClick={() => setReportMetric(metric)}
-                  className={`px-2 py-0.5 rounded capitalize transition-all font-semibold cursor-pointer ${
-                    reportMetric === metric ? "bg-azure text-white" : "text-white/50 hover:text-white"
-                  }`}
+                  whileTap={{ scale: 0.94 }}
+                  className={`relative px-2 py-0.5 rounded capitalize font-semibold cursor-pointer ${reportMetric === metric ? "text-white" : "text-white/50 hover:text-white"}`}
                 >
-                  {metric}
-                </button>
+                  {reportMetric === metric && <motion.span layoutId="report-metric-pill" className="absolute inset-0 rounded bg-azure" transition={pressTransition} />}
+                  <span className="relative z-10">{metric}</span>
+                </motion.button>
               ))}
             </div>
           </div>
 
-          <div className="relative h-32 my-3 w-full">
-            <canvas ref={chartRef} className="w-full h-full" />
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={reportMetric}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+              className="relative h-32 my-3 w-full"
+            >
+              <canvas ref={chartRef} className="w-full h-full" />
+            </motion.div>
+          </AnimatePresence>
 
           <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
             <span>
               {reportMetric === "hours" && "Total Week study: 62.4 Hours (+12% vs last week)"}
               {reportMetric === "weekly" && "Subject breakdown: Physics (28.4h), Chem (20.0h), Maths (14.0h)"}
             </span>
-            <button className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer">
+            <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer">
               View Full Reports →
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </BentoCard>
 
         {/* Friends System Widget */}
-        <div className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={6} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div className="flex justify-between items-start">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Accountability Network</span>
@@ -530,26 +701,39 @@ export default function BentoGrid() {
               { name: "Sneha Mahapatra (SM)", status: "Active: 5.2h · GOC", online: true },
               { name: "Rohan Das (RD)", status: "Idle: 4.1h", online: false }
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs">
+              <motion.div
+                key={item.name}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.06, duration: 0.35, ease: easeOutExpo }}
+                whileHover={reduceMotion ? undefined : { x: 4, borderColor: "rgba(0,127,255,0.25)", backgroundColor: "rgba(255,255,255,0.035)" }}
+                className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs"
+              >
                 <div className="flex items-center gap-2">
-                  <span className={`w-1.5 h-1.5 rounded-full ${item.online ? "bg-emerald-500" : "bg-white/20"}`}></span>
+                  <motion.span
+                    className={`w-1.5 h-1.5 rounded-full ${item.online ? "bg-emerald-500" : "bg-white/20"}`}
+                    animate={item.online && !reduceMotion ? { scale: [1, 1.7, 1] } : undefined}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: idx * 0.25 }}
+                  />
                   <span className="font-semibold text-white/80">{item.name}</span>
                 </div>
                 <span className="text-[10px] text-white/40 font-mono">{item.status}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           <div className="flex gap-2 w-full z-10">
-            <button className="flex-1 h-8 rounded border border-white/5 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
+            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "rgba(255,255,255,0.22)" }} whileTap={{ scale: 0.96 }} className="flex-1 h-8 rounded border border-white/5 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
               Challenge Friends
-            </button>
-            <button className="h-8 px-3 rounded border border-white/10 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
+            </motion.button>
+            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.04, borderColor: "rgba(0,127,255,0.45)" }} whileTap={{ scale: 0.96 }} className="h-8 px-3 rounded border border-white/10 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
               + Connect
-            </button>
+            </motion.button>
           </div>
-        </div>
-      </div>
-    </div>
+        </BentoCard>
+        </motion.div>
+      </motion.div>
+    </MotionConfig>
   );
 }
