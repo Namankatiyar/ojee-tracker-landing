@@ -8,11 +8,39 @@ import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-
 const easeOutExpo = [0.16, 1, 0.3, 1] as const;
 const pressTransition = { type: "spring" as const, stiffness: 520, damping: 32 };
 
+type SubjectKey = "physics" | "chemistry" | "maths";
+type PlannerTask = { id: number; text: string; done: boolean; subject?: SubjectKey };
+type LedgerEntry = { name: string; score: string; max: string; date: string; subject?: SubjectKey };
+
+const subjectThemes: Record<SubjectKey, { label: string; color: string; hex: string; soft: string; border: string }> = {
+  physics: {
+    label: "Physics",
+    color: "var(--color-physics)",
+    hex: "#6366f1",
+    soft: "rgba(99, 102, 241, 0.14)",
+    border: "rgba(99, 102, 241, 0.36)",
+  },
+  chemistry: {
+    label: "Chemistry",
+    color: "var(--color-chemistry)",
+    hex: "#10b981",
+    soft: "rgba(16, 185, 129, 0.14)",
+    border: "rgba(16, 185, 129, 0.36)",
+  },
+  maths: {
+    label: "Mathematics",
+    color: "var(--color-maths)",
+    hex: "#f59e0b",
+    soft: "rgba(245, 158, 11, 0.16)",
+    border: "rgba(245, 158, 11, 0.36)",
+  },
+};
+
 const syllabusNodes = ["NCERT", "PYQs", "Modules", "Mock Tests"];
 const initialSyllabusItems = [
-  { subject: "Physics", topic: "Rotational Mechanics", sub: "Moment of Inertia, Angular Momentum", done: [true, false, false, true] },
-  { subject: "Maths", topic: "Matrices & Determinants", sub: "Cramer's Rule, Adjoint properties", done: [true, true, false, false] },
-  { subject: "Chemistry", topic: "Organic Chemistry GOC", sub: "Inductive & Resonance Effects", done: [true, true, true, false] }
+  { subject: "physics" as const, topic: "Rotational Mechanics", sub: "Moment of Inertia, Angular Momentum", done: [true, false, false, true] },
+  { subject: "maths" as const, topic: "Matrices & Determinants", sub: "Cramer's Rule, Adjoint properties", done: [true, true, false, false] },
+  { subject: "chemistry" as const, topic: "Organic Chemistry GOC", sub: "Inductive & Resonance Effects", done: [true, true, true, false] }
 ];
 
 type ReportMetric = "hours" | "weekly";
@@ -63,15 +91,15 @@ export default function BentoGrid() {
   const [clockTime, setClockTime] = useState("25:00");
   const [isClockRunning, setIsClockRunning] = useState(false);
   const [syllabusItems, setSyllabusItems] = useState(initialSyllabusItems);
-  const [plannerTasks, setPlannerTasks] = useState([
-    { id: 1, text: "Solve 15 Maths Matrices PYQs", done: true },
-    { id: 2, text: "Read Electrostatics NCERT Capacitor theory", done: false },
-    { id: 3, text: "Attempt Chemistry Mock Test 3", done: false }
+  const [plannerTasks, setPlannerTasks] = useState<PlannerTask[]>([
+    { id: 1, subject: "maths" as const, text: "Solve 15 Maths Matrices PYQs", done: true },
+    { id: 2, subject: "physics" as const, text: "Read Electrostatics NCERT Capacitor theory", done: false },
+    { id: 3, subject: "chemistry" as const, text: "Attempt Chemistry Mock Test 3", done: false }
   ]);
   const [plannerInput, setPlannerInput] = useState("");
-  const [mockLedger, setMockLedger] = useState([
-    { name: "JEE Advanced Mock 8", score: "198", max: "300", date: "June 25" },
-    { name: "JEE Main Mock 14", score: "254", max: "300", date: "June 20" }
+  const [mockLedger, setMockLedger] = useState<LedgerEntry[]>([
+    { subject: "physics" as const, name: "JEE Advanced Mock 8", score: "198", max: "300", date: "June 25" },
+    { subject: "chemistry" as const, name: "JEE Main Mock 14", score: "254", max: "300", date: "June 20" }
   ]);
   const [mockInputName, setMockInputName] = useState("");
   const [mockInputScore, setMockInputScore] = useState("");
@@ -106,8 +134,9 @@ export default function BentoGrid() {
     if (!ctx) return;
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 140);
-    gradient.addColorStop(0, "rgba(0, 127, 255, 0.25)");
-    gradient.addColorStop(1, "rgba(0, 127, 255, 0.0)");
+    gradient.addColorStop(0, "rgba(99, 102, 241, 0.28)");
+    gradient.addColorStop(0.5, "rgba(16, 185, 129, 0.16)");
+    gradient.addColorStop(1, "rgba(245, 158, 11, 0.0)");
 
     const dataMap: Record<ReportMetric, ReportChart> = {
       hours: {
@@ -117,17 +146,17 @@ export default function BentoGrid() {
           {
             label: "Study Hours",
             data: [8.5, 9.2, 6.0, 7.8, 10.5, 12.0, 8.4],
-            borderColor: "#007fff",
+            borderColor: "#6366f1",
             borderWidth: 2,
             backgroundColor: gradient,
             fill: true,
             tension: 0.25,
             pointBackgroundColor: "#000000",
-            pointBorderColor: "#007fff",
+            pointBorderColor: "#6366f1",
             pointBorderWidth: 1.5,
             pointRadius: 3.5,
             pointHoverRadius: 6,
-            pointHoverBackgroundColor: "#007fff",
+            pointHoverBackgroundColor: "#6366f1",
             pointHoverBorderColor: "#ffffff",
           }
         ],
@@ -141,19 +170,19 @@ export default function BentoGrid() {
           {
             label: "Physics",
             data: [3.5, 4.0, 2.5, 3.0, 4.5, 5.0, 3.4],
-            backgroundColor: "#007fff",
+            backgroundColor: "#6366f1",
             borderRadius: 2
           },
           {
             label: "Chemistry",
             data: [2.5, 3.2, 2.0, 2.8, 3.5, 4.0, 3.0],
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            backgroundColor: "#10b981",
             borderRadius: 2
           },
           {
             label: "Maths",
             data: [2.5, 2.0, 1.5, 2.0, 2.5, 3.0, 2.0],
-            backgroundColor: "rgba(255, 255, 255, 0.25)",
+            backgroundColor: "#f59e0b",
             borderRadius: 2
           }
         ],
@@ -329,57 +358,64 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex flex-col gap-3 my-4">
-            {syllabusItems.map((item, idx) => (
-              <motion.div
-                key={item.topic}
-                layout
-                whileHover={reduceMotion ? undefined : { x: 4, backgroundColor: "rgba(255,255,255,0.035)" }}
-                transition={pressTransition}
-                className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-white/5 bg-white/[0.01] hover:border-white/10 transition-colors gap-3"
-              >
-                <div className="flex flex-col flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] uppercase tracking-wider font-mono text-azure-dynamic font-semibold">{item.subject}</span>
-                    <span className="text-xs font-semibold text-white">{item.topic}</span>
+            {syllabusItems.map((item, idx) => {
+              const theme = subjectThemes[item.subject];
+
+              return (
+                <motion.div
+                  key={item.topic}
+                  layout
+                  whileHover={reduceMotion ? undefined : { x: 4, backgroundColor: theme.soft }}
+                  transition={pressTransition}
+                  className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-white/5 bg-white/[0.01] hover:border-white/10 transition-colors gap-3"
+                >
+                  <div className="flex flex-col flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] uppercase tracking-wider font-mono font-semibold" style={{ color: theme.color }}>
+                        {theme.label}
+                      </span>
+                      <span className="text-xs font-semibold text-white">{item.topic}</span>
+                    </div>
+                    <span className="text-[10px] text-white/50 mt-0.5">{item.sub}</span>
                   </div>
-                  <span className="text-[10px] text-white/50 mt-0.5">{item.sub}</span>
-                </div>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {syllabusNodes.map((node, nIdx) => (
-                    <motion.button
-                      key={nIdx}
-                      type="button"
-                      layout
-                      whileHover={reduceMotion ? undefined : { scale: 1.06 }}
-                      whileTap={{ scale: 0.92 }}
-                      onClick={() => toggleSyllabusNode(idx, nIdx)}
-                      transition={pressTransition}
-                      className={`px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider ${
-                        item.done[nIdx] 
-                          ? "bg-azure/80 border-azure/80 text-white" 
-                          : "border-white/10 text-white/40 hover:border-white/20 hover:text-white"
-                      }`}
-                    >
-                      <AnimatePresence initial={false} mode="popLayout">
-                        {item.done[nIdx] && (
-                          <motion.span
-                            key="spark"
-                            aria-hidden="true"
-                            initial={{ scale: 0, opacity: 0, rotate: -45 }}
-                            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            className="mr-1 inline-block"
-                          >
-                            ✓
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                      {node}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {syllabusNodes.map((node, nIdx) => (
+                      <motion.button
+                        key={nIdx}
+                        type="button"
+                        layout
+                        whileHover={reduceMotion ? undefined : { scale: 1.06 }}
+                        whileTap={{ scale: 0.92 }}
+                        onClick={() => toggleSyllabusNode(idx, nIdx)}
+                        transition={pressTransition}
+                        style={
+                          item.done[nIdx]
+                            ? { backgroundColor: theme.soft, borderColor: theme.color, color: theme.color }
+                            : { borderColor: theme.border, color: "rgba(255,255,255,0.42)" }
+                        }
+                        className="px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider"
+                      >
+                        <AnimatePresence initial={false} mode="popLayout">
+                          {item.done[nIdx] && (
+                            <motion.span
+                              key="spark"
+                              aria-hidden="true"
+                              initial={{ scale: 0, opacity: 0, rotate: -45 }}
+                              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                              exit={{ scale: 0, opacity: 0 }}
+                              className="mr-1 inline-block"
+                            >
+                              ✓
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
+                        {node}
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
@@ -487,12 +523,26 @@ export default function BentoGrid() {
                   onChange={() => setPlannerTasks(prev => prev.map(item => item.id === t.id ? { ...item, done: !item.done } : item))}
                   className="rounded border-white/20 bg-black text-azure-dynamic focus:ring-0 w-3.5 h-3.5"
                 />
-                <motion.span
-                  animate={{ opacity: t.done ? 0.45 : 0.85, x: t.done && !reduceMotion ? 3 : 0 }}
-                  className={t.done ? "line-through text-white/40" : "text-white/80"}
-                >
-                  {t.text}
-                </motion.span>
+                <div className="flex min-w-0 items-center gap-2">
+                  {t.subject && (
+                    <span
+                      className="shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                      style={{
+                        color: subjectThemes[t.subject].color,
+                        borderColor: subjectThemes[t.subject].border,
+                        backgroundColor: subjectThemes[t.subject].soft,
+                      }}
+                    >
+                      {subjectThemes[t.subject].label}
+                    </span>
+                  )}
+                  <motion.span
+                    animate={{ opacity: t.done ? 0.45 : 0.85, x: t.done && !reduceMotion ? 3 : 0 }}
+                    className={t.done ? "min-w-0 truncate line-through text-white/40" : "min-w-0 truncate text-white/80"}
+                  >
+                    {t.text}
+                  </motion.span>
+                </div>
               </motion.div>
               ))}
             </AnimatePresence>
@@ -534,16 +584,34 @@ export default function BentoGrid() {
                 initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                whileHover={reduceMotion ? undefined : { x: 3, borderColor: "rgba(0,127,255,0.3)" }}
+                whileHover={
+                  reduceMotion || !item.subject
+                    ? undefined
+                    : { x: 3, borderColor: subjectThemes[item.subject].border, backgroundColor: subjectThemes[item.subject].soft }
+                }
                 className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs"
               >
                 <div className="flex flex-col">
-                  <span className="font-semibold text-white/90">{item.name}</span>
+                  <div className="flex items-center gap-2">
+                    {item.subject && (
+                      <span
+                        className="rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                        style={{
+                          color: subjectThemes[item.subject].color,
+                          borderColor: subjectThemes[item.subject].border,
+                          backgroundColor: subjectThemes[item.subject].soft,
+                        }}
+                      >
+                        {subjectThemes[item.subject].label}
+                      </span>
+                    )}
+                    <span className="font-semibold text-white/90">{item.name}</span>
+                  </div>
                   <span className="text-[9px] text-white/40">{item.date}</span>
                 </div>
                 <motion.span
                   initial={reduceMotion ? false : { scale: 1.18, color: "#ffffff" }}
-                  animate={{ scale: 1, color: "#007fff" }}
+                  animate={{ scale: 1, color: item.subject ? subjectThemes[item.subject].color : "#007fff" }}
                   className="font-mono text-azure-dynamic font-bold"
                 >
                   {item.score} / {item.max}
@@ -662,22 +730,32 @@ export default function BentoGrid() {
             </div>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={reportMetric}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(6px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-              className="relative h-32 my-3 w-full"
-            >
-              <canvas ref={chartRef} className="w-full h-full" />
-            </motion.div>
-          </AnimatePresence>
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0.55, y: 8, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.28, ease: easeOutExpo }}
+            className="relative h-32 my-3 w-full"
+          >
+            <canvas ref={chartRef} className="w-full h-full" />
+          </motion.div>
 
           <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
-            <span>
-              {reportMetric === "hours" && "Total Week study: 62.4 Hours (+12% vs last week)"}
-              {reportMetric === "weekly" && "Subject breakdown: Physics (28.4h), Chem (20.0h), Maths (14.0h)"}
+            <span className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
+              {reportMetric === "hours" && (
+                <>
+                  <span>Total Week study:</span>
+                  <span style={{ color: subjectThemes.physics.color }}>62.4 Hours</span>
+                  <span>(+12% vs last week)</span>
+                </>
+              )}
+              {reportMetric === "weekly" && (
+                <>
+                  <span>Subject breakdown:</span>
+                  <span style={{ color: subjectThemes.physics.color }}>Physics (28.4h)</span>
+                  <span style={{ color: subjectThemes.chemistry.color }}>Chemistry (20.0h)</span>
+                  <span style={{ color: subjectThemes.maths.color }}>Mathematics (14.0h)</span>
+                </>
+              )}
             </span>
             <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer">
               View Full Reports →

@@ -4,12 +4,18 @@
   --background: #000000;
   --foreground: #ffffff;
   --color-azure: #007fff;
+  --color-physics: #6366f1;
+  --color-chemistry: #10b981;
+  --color-maths: #f59e0b;
 }
 
 @theme {
   --color-background: #000000;
   --color-foreground: #ffffff;
   --color-azure: #007fff;
+  --color-physics: #6366f1;
+  --color-chemistry: #10b981;
+  --color-maths: #f59e0b;
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-display: var(--font-outfit), sans-serif;
 }
@@ -87,6 +93,5 @@ body {
   font-size: 7px;
   color: rgba(255, 255, 255, 0.3);
 }
-
 
 

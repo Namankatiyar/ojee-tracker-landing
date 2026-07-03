@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import { Geist, Outfit } from "next/font/google";
 import "./globals.css";
@@ -14,8 +14,23 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "OJEE-Tracker | Premium JEE & OJEE Study Command Centre",
-  description: "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE & OJEE aspirants.",
+  metadataBase: new URL("https://ojeet.tech"),
+  title: {
+    default: "OJEE-Tracker | Premium JEE, NEET & OJEE Study Command Centre",
+    template: "%s | OJEE-Tracker",
+  },
+  description: "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE, NEET & OJEE aspirants.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0080ff",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
