@@ -439,16 +439,16 @@ export default function BentoGrid() {
         <div className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/40">IITian AI Planner</span>
+              <div className="w-2 h-2 rounded-full bg-azure animate-pulse"></div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/40">BLUE AI</span>
             </div>
-            <span className="text-[9px] text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono bg-emerald-500/10">Active</span>
+            <span className="text-[9px] text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono bg-emerald-500/10">API KEY ACTIVE</span>
           </div>
 
-          <div className="flex flex-col gap-2 my-2 max-h-[110px] overflow-y-auto text-[10px] pr-1">
+          <div className="flex flex-col gap-2 my-2 max-h-[110px] overflow-y-auto text-sm pr-1">
             {aiChat.slice(-3).map((msg, idx) => (
-              <div key={idx} className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? "bg-white/5 text-white/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-white/90 self-end max-w-[90%]"}`}>
-                <span className="font-bold text-[8px] uppercase tracking-wider text-white/40">{msg.sender === "agent" ? "AI Planner" : "You"}</span>
+              <div key={idx} className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-white/5 text-white/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-white/90 self-end max-w-[90%]"}`}>
+                <span className="font-bold text-[12px] uppercase tracking-wider text-white/40">{msg.sender === "agent" ? "AI Planner" : "You"}</span>
                 <p className="leading-tight">{msg.text}</p>
               </div>
             ))}

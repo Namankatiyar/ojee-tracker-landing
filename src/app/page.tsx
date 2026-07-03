@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import InteractiveGrid from "../../InteractiveGrid";
 import BentoGrid from "@/components/BentoGrid";
+import ShareableCard from "@/components/ShareableCard";
 
 // Helper for inline SVGs to keep the codebase dependency-free and performant
 const Icons = {
@@ -49,91 +51,11 @@ const Icons = {
   )
 };
 
-// Realistic mock motivational quotes
-const MOTIVATIONAL_QUOTES = [
-  { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
-  { text: "The difference between a successful person and others is not a lack of strength, but a lack of will.", author: "Vince Lombardi" },
-  { text: "Your JEE rank is decided by what you do when no one is watching.", author: "IITian Mentor" },
-  { text: "Struggle today, conquer tomorrow. Physics, Chemistry, Maths are won one problem at a time.", author: "OJEE Strategy" },
-  { text: "Don't stop when you are tired. Stop when you are done.", author: "Unknown" }
-];
-
-// Sample syllabus dataset for OJEE-Tracker
-const SYLLABUS_DATA = {
-  Maths: [
-    { id: "m1", name: "Matrices & Determinants", subtopics: "Cramer's Rule, Adjoint, Inverse Properties", progress: { ncert: true, pyq: true, module: false }, revisedDaysAgo: 12 },
-    { id: "m2", name: "Limits, Continuity & Differentiability", subtopics: "L'Hopital Rule, Intermediate Value Theorem", progress: { ncert: true, pyq: false, module: false }, revisedDaysAgo: 45 },
-    { id: "m3", name: "Vector Algebra & 3D Geometry", subtopics: "Shortest distance between skew lines, Scalar Triple Product", progress: { ncert: false, pyq: false, module: false }, revisedDaysAgo: 5 },
-    { id: "m4", name: "Definite Integration", subtopics: "Leibniz Rule, King's & Queen's Properties", progress: { ncert: true, pyq: true, module: true }, revisedDaysAgo: 2 }
-  ],
-  Physics: [
-    { id: "p1", name: "Electrostatics & Capacitance", subtopics: "Gauss Law applications, Dielectric slabs", progress: { ncert: true, pyq: true, module: false }, revisedDaysAgo: 35 },
-    { id: "p2", name: "Rotational Mechanics", subtopics: "Moment of Inertia, Angular Momentum Conservation", progress: { ncert: false, pyq: false, module: false }, revisedDaysAgo: 8 },
-    { id: "p3", name: "Modern Physics", subtopics: "Photoelectric Effect, Bohr's Model, Radioactive decay", progress: { ncert: true, pyq: true, module: true }, revisedDaysAgo: 28 },
-    { id: "p4", name: "Optics (Wave & Ray)", subtopics: "YDSE fringes, Prism formula, Lens maker's formula", progress: { ncert: true, pyq: false, module: false }, revisedDaysAgo: 50 }
-  ],
-  Chemistry: [
-    { id: "c1", name: "Chemical Bonding", subtopics: "VSEPR theory, Hybridization, Molecular Orbital Theory", progress: { ncert: true, pyq: true, module: true }, revisedDaysAgo: 3 },
-    { id: "c2", name: "Gaseous State & Thermodynamics", subtopics: "Ideal gas laws, Entropy, Gibbs Free Energy", progress: { ncert: true, pyq: false, module: false }, revisedDaysAgo: 19 },
-    { id: "c3", name: "Organic Chemistry Basics (GOC)", subtopics: "Inductive & Resonance Effects, Hyperconjugation", progress: { ncert: true, pyq: true, module: false }, revisedDaysAgo: 32 },
-    { id: "c4", name: "Coordination Compounds", subtopics: "Crystal Field Theory, Isomerism in coordination complexes", progress: { ncert: false, pyq: false, module: false }, revisedDaysAgo: 14 }
-  ]
-};
-
 export default function LandingPage() {
   
   // App-specific interactive demo states
-  const [selectedSubject, setSelectedSubject] = useState<"Maths" | "Physics" | "Chemistry">("Maths");
-  const [syllabusList, setSyllabusList] = useState(SYLLABUS_DATA);
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [countdownDays, setCountdownDays] = useState(142);
-  const [studyHoursToday, setStudyHoursToday] = useState(6.4);
-  const [totalCompletedItems, setTotalCompletedItems] = useState(18);
-
-
-
-  // Rotate quotes index
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentQuoteIndex((prev) => (prev + 1) % MOTIVATIONAL_QUOTES.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Update total progress count dynamically when user clicks resource dots
-  useEffect(() => {
-    let completedCount = 0;
-    Object.values(syllabusList).forEach((topics) => {
-      topics.forEach((topic) => {
-        if (topic.progress.ncert) completedCount++;
-        if (topic.progress.pyq) completedCount++;
-        if (topic.progress.module) completedCount++;
-      });
-    });
-    setTotalCompletedItems(completedCount);
-  }, [syllabusList]);
-
-  // Click handler to toggle syllabus resource item states (NCERT, PYQ, Module)
-  const handleToggleResource = (subject: "Maths" | "Physics" | "Chemistry", id: string, key: "ncert" | "pyq" | "module") => {
-    setSyllabusList((prev) => {
-      const updatedTopics = prev[subject].map((topic) => {
-        if (topic.id === id) {
-          return {
-            ...topic,
-            progress: {
-              ...topic.progress,
-              [key]: !topic.progress[key]
-            }
-          };
-        }
-        return topic;
-      });
-      return {
-        ...prev,
-        [subject]: updatedTopics
-      };
-    });
-  };
+  const [countdownDays] = useState(142);
+  const [studyHoursToday] = useState(6.4);
 
   // Glassmorphic CSS style generation
   const glassStyle = {
@@ -144,48 +66,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white selection:bg-azure selection:text-white font-sans overflow-x-hidden">
-      
-      {/* 1. HEADER */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Minimal High-Contrast Logo */}
-            <div className="w-8 h-8 rounded border border-white flex items-center justify-center font-display font-bold text-sm tracking-tighter">
-              OT
-            </div>
-            <span className="font-display font-semibold text-lg tracking-tight">OJEE-Tracker</span>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/60">
-            <a href="#features" className="transition-colors hover:text-white">Features</a>
-            <a href="#dashboard-preview" className="transition-colors hover:text-white">Analytics</a>
-            <a href="#community" className="transition-colors hover:text-white">Community</a>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <a 
-              href="https://github.com/Namankatiyar/ojee-tracker" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 text-white/60 hover:text-white transition-colors"
-              aria-label="GitHub Repository"
-            >
-              <Icons.Github />
-            </a>
-            <a 
-              href="https://discord.gg/6dKrbVQU8W" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 px-4 h-9 rounded bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors"
-            >
-              <Icons.Discord />
-              <span>Join Discord</span>
-            </a>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex flex-1 flex-col bg-black text-white selection:bg-azure selection:text-white font-sans overflow-x-hidden">
       {/* Hero Wrapper with Full-Width Background Grid */}
       <div className="relative w-full bg-black border-b border-white/5 overflow-hidden">
         <InteractiveGrid />
@@ -209,10 +90,15 @@ export default function LandingPage() {
             <span className="text-white/70 tracking-wide uppercase text-[10px] flex items-center gap-2">
               Join 500+ aspirants
               <div className="relative flex h-2.5 w-2.5 items-center justify-center">
-                <motion.span 
-                  className="absolute inline-flex h-full w-full rounded-full bg-azure"
-                  animate={{ scale: [1, 2.5, 1], opacity: [0.8, 0, 0.8] }}
-                  transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+                <motion.span
+                  className="absolute inline-flex h-full w-full rounded-full bg-azure/70"
+                  animate={{ scale: [1, 2.3, 1], opacity: [0.7, 0.15, 0] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.span
+                  className="absolute inline-flex h-full w-full rounded-full bg-azure/55"
+                  animate={{ scale: [1, 2.3, 1], opacity: [0, 0.45, 0] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: 1.1 }}
                 />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-azure" />
               </div>
@@ -223,12 +109,12 @@ export default function LandingPage() {
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.08] mb-6">
             Finally, a Planner That Gets It.
             <span className="block text-xs sm:text-sm font-medium tracking-widest text-azure uppercase mt-4">
-              built by a jee aspirant for the jee aspirants.
+              built by a jee aspirant for jee aspirants.
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-white/60 font-normal leading-relaxed max-w-2xl mb-10">
-            Log active study hours, track syllabus completion down to subtopics, and analyze progress with zero cloud dependencies. High-density design meets distraction-free productivity.
+          Built for the grind. Track your syllabus down to the last subtopic, log every study hour, and analyse your progress — offline-first, always instant.
           </p>
 
           {/* Call to Actions (No glows, high contrast borders) */}
@@ -240,7 +126,7 @@ export default function LandingPage() {
               }}
               className="flex items-center justify-center gap-2 px-8 h-12 rounded bg-white text-black font-semibold text-base tracking-tight hover:bg-white/90 transition-all cursor-pointer"
             >
-              <span>Explore Active Live Demo</span>
+              <span>Open Tracker</span>
               <Icons.ExternalLink />
             </button>
             <a 
@@ -251,7 +137,7 @@ export default function LandingPage() {
               style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             >
               <Icons.Github />
-              <span>View Code on GitHub</span>
+              <span>View on GitHub</span>
             </a>
           </div>
 
@@ -266,9 +152,9 @@ export default function LandingPage() {
         <section id="dashboard-preview" className="flex flex-col gap-8 scroll-mt-24">
           <div className="flex flex-col gap-2 max-w-2xl">
             <div className="text-sm font-semibold text-azure tracking-widest uppercase">Live Workspace Showcase</div>
-            <h2 className="font-display text-3xl font-bold tracking-tight">The 12-Column Bento Analytics Dashboard</h2>
+            <h2 className="font-display text-3xl font-bold tracking-tight">All the features you need.</h2>
             <p className="text-base text-white/60">
-              All stats, heatmap calendars, active subject ratios, and countdowns laid out cleanly with a premium glassmorphic visual style.
+              Every stat available at your fingertips.
             </p>
           </div>
 
@@ -278,35 +164,51 @@ export default function LandingPage() {
         {/* 6. PEER COMMUNITY & SOCIAL FEED */}
         <section id="community" className="flex flex-col gap-8 scroll-mt-24">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Peer Network</div>
+            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Friends Network</div>
             <h2 className="font-display text-3xl font-bold tracking-tight">Study Better, Together</h2>
             <p className="text-base text-white/60">
-              Synchronize logs, compare metrics, and stay accountable. Below is a live rendering of the companion peer feed.
+              Synchronize logs, compare metrics, and stay accountable.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Friends Activity Feed Component */}
+            {/* Friends Activity Feed Component */}
             <div 
               style={glassStyle}
               className="rounded-xl p-6 flex flex-col gap-6"
             >
-              <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-azure"></span>
-                <span className="text-sm font-bold uppercase tracking-wider">Active Peer Stream</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-azure"></span>
+                  <span className="text-sm font-bold uppercase tracking-wider">Friends</span>
+                </div>
+                <span className="text-xs text-white/40 font-mono">4 peers live</span>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="peer-list flex flex-col gap-3 transition-all duration-200">
                 {[
-                  { name: "Aman Rathore", status: "Solving Matrices PYQs", active: "Just now", hours: "7.8 hrs", initials: "AR" },
-                  { name: "Sneha Mahapatra", status: "Completing Organic Chemistry NCERT", active: "12 mins ago", hours: "5.2 hrs", initials: "SM" },
-                  { name: "Rohan Das", status: "Idle - stopwatch paused", active: "2 hours ago", hours: "4.1 hrs", initials: "RD" }
+                  { name: "Aman Rathore", status: "Solving Matrices PYQs", active: "Just now", hours: "7.8 hrs", initials: "AR", isOnline: true },
+                  { name: "Priya Sharma", status: "Revising Modern Physics formulas", active: "5 mins ago", hours: "6.4 hrs", initials: "PS", isOnline: true },
+                  { name: "Sneha Mahapatra", status: "Completing Organic Chemistry NCERT", active: "12 mins ago", hours: "5.2 hrs", initials: "SM", isOnline: true },
+                  { name: "Aditya Patel", status: "Writing Organic Chemistry Notes", active: "45 mins ago", hours: "4.8 hrs", initials: "AP", isOnline: true },
+                  { name: "Rohan Das", status: "Idle - stopwatch paused", active: "2 hours ago", hours: "4.1 hrs", initials: "RD", isOnline: false },
+                  { name: "Tanmay Rao", status: "Solving Integration Practice", active: "1 hour ago", hours: "3.5 hrs", initials: "TR", isOnline: false },
+                  { name: "Divya Nair", status: "Mock Test Analysis - Test 3", active: "3 hours ago", hours: "8.2 hrs", initials: "DN", isOnline: false }
                 ].map((friend, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.01]">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.01] transition-all duration-150 hover:bg-white/[0.03] hover:border-white/10"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center font-display font-semibold text-xs border border-white/20">
-                        {friend.initials}
+                      <div className="relative">
+                        <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center font-display font-semibold text-xs border border-white/20">
+                          {friend.initials}
+                        </div>
+                        {friend.isOnline && (
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-azure border border-black" />
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold">{friend.name}</span>
@@ -322,48 +224,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Shareable OG Card Exporter preview */}
-            <div 
-              style={glassStyle}
-              className="rounded-xl p-6 flex flex-col justify-between min-h-[300px]"
-            >
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-bold uppercase tracking-wider text-white/40">Dynamic Shareable Card</span>
-                <p className="text-xs text-white/60">Generate and export high-res summaries to share on study forums, Discord, or WhatsApp.</p>
-              </div>
-
-              {/* Visual Exporter Container Mock */}
-              <div className="border border-white/15 rounded bg-black p-4 flex flex-col gap-3 my-4">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-azure flex items-center justify-center font-bold text-[10px]">JEE</div>
-                    <span className="text-xs font-semibold">OJEE-Tracker Profile</span>
-                  </div>
-                  <span className="font-mono text-[9px] text-white/40">June 28, 2026</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-center py-1">
-                  <div>
-                    <div className="text-[9px] text-white/40 uppercase">Hours Logged</div>
-                    <div className="text-base font-bold text-azure">{studyHoursToday.toFixed(1)}h</div>
-                  </div>
-                  <div>
-                    <div className="text-[9px] text-white/40 uppercase">Overall Progress</div>
-                    <div className="text-base font-bold text-white">{Math.round((totalCompletedItems / 36) * 100)}%</div>
-                  </div>
-                  <div>
-                    <div className="text-[9px] text-white/40 uppercase">Countdown</div>
-                    <div className="text-base font-bold text-white">{countdownDays}d</div>
-                  </div>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => alert("Simulated Profile Exporter triggered. High-res card ready for clipboard!")}
-                className="w-full h-10 rounded border border-white/20 text-xs font-semibold tracking-wide uppercase hover:bg-white/5 hover:border-white/40 transition-colors cursor-pointer"
-              >
-                Export Progress summary Card
-              </button>
-            </div>
+            {/* Redesigned Shareable Card Component */}
+            <ShareableCard hoursToday={studyHoursToday} countdownDays={countdownDays} />
 
           </div>
         </section>
@@ -374,20 +236,24 @@ export default function LandingPage() {
       <footer className="border-t border-white/5 bg-black py-12 mt-24">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded border border-white flex items-center justify-center font-display font-bold text-xs tracking-tighter">
-              OT
-            </div>
+            <Image
+              src="/logo.png"
+              alt="OJEE-Tracker logo"
+              width={24}
+              height={24}
+              className="h-6 w-6 shrink-0 object-contain"
+            />
             <span className="font-display font-semibold text-sm tracking-tight">OJEE-Tracker</span>
           </div>
 
           <p className="text-xs text-white/40 text-center md:text-left">
-            &copy; 2026 OJEE-Tracker. Built with React, Next.js, and Framer Motion. Open source under the MIT License.
+            &copy; 2026 OJEE-Tracker. Open source under the GNU GPLv3 License.
           </p>
 
           <div className="flex items-center gap-6 text-xs text-white/60">
-            <a href="https://github.com/Namankatiyar/ojee-tracker/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">License</a>
-            <a href="https://discord.gg/6dKrbVQU8W" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Support</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">License</a>
+            <a href="https://tracker.ojeet.tech/terms-of-service" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms</a>
+            <a href="https://tracker.ojeet.tech/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a>
           </div>
         </div>
       </footer>

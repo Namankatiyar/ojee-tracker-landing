@@ -1,46 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-// Banner preset options inspired by reference themes (Sunset, Cyberpunk, Ethereal, Deep Space)
-const BANNER_PRESETS = [
-  {
-    id: "sunset",
-    name: "Crimson Horizon",
-    gradient: "from-rose-500 via-orange-500 to-amber-400",
-    pattern: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 40%)"
-  },
-  {
-    id: "cyberpunk",
-    name: "Neon Cyber",
-    gradient: "from-purple-600 via-indigo-600 to-cyan-400",
-    pattern: "linear-gradient(135deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent)"
-  },
-  {
-    id: "ethereal",
-    name: "Emerald Garden",
-    gradient: "from-emerald-600 via-teal-500 to-lime-400",
-    pattern: "radial-gradient(circle at 20% 80%, rgba(255,255,255,0.25) 0%, transparent 50%)"
-  },
-  {
-    id: "void",
-    name: "Cosmic Void",
-    gradient: "from-slate-900 via-blue-950 to-indigo-900",
-    pattern: "radial-gradient(circle at 50% 50%, rgba(56,189,248,0.2) 0%, transparent 60%)"
-  }
-];
+interface ShareableCardProps {
+  hoursToday?: number;
+  countdownDays?: number;
+}
 
-export default function ShareableCard() {
-  const [activeBanner, setActiveBanner] = useState(BANNER_PRESETS[0]);
+export default function ShareableCard({ hoursToday = 6.4, countdownDays = 142 }: ShareableCardProps) {
   const [copied, setCopied] = useState(false);
 
-  // Interactive Agenda items state
+  // Interactive Agenda items aligned with the Obsidian Command Deck language
   const [agenda, setAgenda] = useState([
-    { id: 1, title: "Electrostatics & Gauss Law (PYQs)", time: "3:00 PM", done: false, color: "bg-purple-500 shadow-purple-500/50" },
-    { id: 2, title: "Coordination Compounds Revision", time: "5:30 PM", done: false, color: "bg-amber-400 shadow-amber-400/50" },
-    { id: 3, title: "Rotational Dynamics Mock Analysis", time: "8:00 PM", done: true, color: "bg-emerald-500 shadow-emerald-500/50" },
-    { id: 4, title: "Definite Integration Module Qs", time: "10:30 PM", done: false, color: "bg-cyan-400 shadow-cyan-400/50" }
+    { id: 1, title: "Electrostatics & Gauss Law (PYQs)", time: "15:00 HRS", done: false, indicator: "border-azure bg-azure/20" },
+    { id: 2, title: "Coordination Compounds Revision", time: "17:30 HRS", done: false, indicator: "border-white/40 bg-transparent" },
+    { id: 3, title: "Rotational Dynamics Mock Analysis", time: "20:00 HRS", done: true, indicator: "border-azure bg-azure" },
+    { id: 4, title: "Definite Integration Module Qs", time: "22:30 HRS", done: false, indicator: "border-white/40 bg-transparent" }
   ]);
 
   const toggleAgendaItem = (id: number) => {
@@ -55,155 +31,131 @@ export default function ShareableCard() {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      {/* Banner Theme Switcher Toolbar */}
-      <div className="flex items-center justify-between px-1">
-        <span className="text-xs text-white/50 font-medium">Select Card Aesthetic:</span>
-        <div className="flex items-center gap-2">
-          {BANNER_PRESETS.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => setActiveBanner(preset)}
-              title={preset.name}
-              className={`w-5 h-5 rounded-full bg-gradient-to-tr ${preset.gradient} transition-transform cursor-pointer ${
-                activeBanner.id === preset.id
-                  ? "scale-125 ring-2 ring-white ring-offset-2 ring-offset-black"
-                  : "opacity-60 hover:opacity-100 hover:scale-110"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Main Card Container */}
+    <div className="w-full">
+      {/* Main Obsidian Command Deck Card Container */}
       <motion.div
         layout
-        className="relative bg-[#0d0e12] border border-white/10 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300"
+        className="relative bg-[#050505] border border-white/10 rounded-xl overflow-hidden transition-all duration-200"
       >
-        {/* Top Banner Artwork */}
-        <div className={`relative h-28 w-full bg-gradient-to-r ${activeBanner.gradient} overflow-hidden transition-colors duration-500`}>
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
-            style={{ backgroundImage: activeBanner.pattern }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0e12]/80" />
+        {/* Top Blueprint Header Canvas (No glow, high precision grid lines) */}
+        <div className="relative h-24 w-full bg-[#08080a] border-b border-white/10 overflow-hidden">
+          {/* Clean Top Header Canvas */}
         </div>
 
         {/* Card Body */}
         <div className="px-6 pb-6 pt-0 relative">
           {/* Avatar & Online Status Row */}
-          <div className="flex items-end justify-between -mt-10 mb-4">
-            {/* Overlapping Avatar Circle */}
+          <div className="flex items-end justify-between -mt-10 mb-5">
+            {/* High-Contrast Monogram Avatar (Border-Only Depth Rule) */}
             <div className="relative">
-              <div className="w-20 h-20 rounded-full border-4 border-[#0d0e12] bg-[#1a1c26] flex items-center justify-center shadow-xl overflow-hidden group">
-                {/* Minimalist Aspirant Emblem inside Avatar */}
-                <div className="w-full h-full bg-gradient-to-br from-white/10 to-white/5 flex flex-col items-center justify-center">
-                  <svg className="w-8 h-8 text-white/80 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                  </svg>
+              <div className="w-20 h-20 rounded-full border border-white/20 bg-black flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-white/[0.02] flex items-center justify-center font-display font-black text-3xl text-white tracking-tight">
+                  OT
                 </div>
               </div>
-              <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#0d0e12]" />
             </div>
 
-            {/* Status Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Active study session</span>
+            {/* High-Contrast Status Pill */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded border border-white/15 bg-white/[0.02] text-xs font-mono text-white/80">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span>STUDYING</span>
             </div>
           </div>
 
-          {/* Notice: No name displayed here, as specifically requested! */}
-          
-          {/* Motto / Status Quote & Tag Pills */}
-          <div className="flex flex-col gap-3 mb-5">
-            <div className="flex items-center gap-2 text-xs text-white/70 italic font-mono pl-1 border-l-2 border-azure">
-              <span>&ldquo;Grinding Physics & PYQs. No shortcuts.&rdquo;</span>
+          {/* Motto & Tag Pills */}
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex items-center gap-2 text-xs text-white/70 pl-2.5 border-l border-azure">
+              <span>Grinding with absolute focus.</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs font-medium text-white/90 flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-azure" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
-                </svg>
-                <span>Dropper</span>
+              <span className="px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-xs font-mono text-white/90">
+                DROPPER
               </span>
-              <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs font-medium text-white/90 flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                </svg>
-                <span>JEE 2027</span>
-              </span>
-              <span className="px-2 py-0.5 rounded bg-azure/10 border border-azure/30 text-[10px] font-mono font-bold text-azure tracking-wider uppercase">
-                AIR &lt; 500
+              <span className="px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-xs font-mono text-white/90">
+                JEE 2027
               </span>
             </div>
           </div>
 
-          {/* Divider & Metrics Toolbar Row */}
-          <div className="py-3.5 border-y border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 my-5">
+          {/* Divider & Technical Metrics Row */}
+          <div className="py-3.5 border-y border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 my-6">
             {/* Left Metrics */}
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-1.5 font-mono">
-                <span className="text-white/40">⏱</span>
-                <span className="font-bold text-white">6h 40m</span>
+            <div className="flex items-center gap-5 font-mono text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-white/40 uppercase text-[10px]">TIME</span>
+                <span className="font-semibold text-white">{hoursToday.toFixed(1)}H</span>
               </div>
               <div className="w-px h-3 bg-white/10" />
-              <div className="flex items-center gap-1.5 font-mono">
-                <span className="text-white/40">⚡</span>
-                <span className="font-bold text-white">93 Qs</span>
+              <div className="flex items-center gap-2">
+                <span className="text-white/40 uppercase text-[10px]">SOLVED</span>
+                <span className="font-semibold text-white">93 QS</span>
               </div>
               <div className="w-px h-3 bg-white/10" />
-              <div className="flex items-center gap-1.5 font-mono">
-                <span className="text-white/40">🔥</span>
-                <span className="font-bold text-amber-400">14d</span>
+              <div className="flex items-center gap-2">
+                <span className="text-white/40 uppercase text-[10px]">STREAK</span>
+                <span className="font-semibold text-azure">14D</span>
               </div>
             </div>
 
-            {/* Right Weekly Heatmap */}
-            <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-1.5">
-                {(["F", "S", "S", "M", "T", "W", "T"] as const).map((day, i) => {
-                  // Simulate heatmap levels
-                  const levels = ["bg-emerald-500", "bg-emerald-500", "bg-white/10", "bg-emerald-400", "bg-emerald-600", "bg-emerald-500", "bg-azure animate-pulse"];
-                  return (
-                    <div key={i} className="flex flex-col items-center gap-1">
-                      <div className={`w-2.5 h-2.5 rounded-[2px] ${levels[i]} transition-transform hover:scale-125`} />
-                      <span className="text-[8px] font-mono text-white/30">{day}</span>
-                    </div>
-                  );
-                })}
-              </div>
+            {/* Right Weekly Activity Matrix */}
+            <div className="flex items-center gap-1.5">
+              {(["F", "S", "S", "M", "T", "W", "T"] as const).map((day, i) => {
+                // High-precision monochromatic/azure heatmap blocks
+                const isActive = i === 6 || i === 1 || i === 3 || i === 4 || i === 1 || i === 6;
+                const isHighlight = i === 6;
+                return (
+                  <div key={i} className="flex flex-col items-center gap-1">
+                    <div
+                      className={`w-2.5 h-2.5 rounded-[1px] transition-colors ${
+                        isHighlight
+                          ? "bg-green-400"
+                          : isActive
+                          ? "bg-green-700"
+                          : "bg-green-500"
+                      }`}
+                    />
+                    <span className="text-[8px] font-mono text-white/30">{day}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Today's Agenda Section */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold tracking-widest text-white/40 uppercase">
-                Today&apos;s Agenda
+              <span className="text-[10px] font-mono font-medium tracking-widest text-white/40 uppercase">
+                TODAY&apos;S AGENDA
               </span>
-              <span className="text-[10px] text-white/30 font-mono">Click to check off</span>
             </div>
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {agenda.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => toggleAgendaItem(item.id)}
-                  className={`group flex items-center justify-between p-2.5 rounded-lg border transition-all cursor-pointer ${
+                  className={`group flex items-center justify-between p-3 rounded border transition-all cursor-pointer ${
                     item.done
                       ? "bg-white/[0.01] border-white/5 opacity-50"
-                      : "bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.05]"
+                      : "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 shadow-sm ${item.done ? "bg-white/20" : item.color}`} />
-                    <span className={`text-xs truncate transition-all ${item.done ? "line-through text-white/40" : "font-medium text-white/90"}`}>
+                    <span
+                      className={`w-2 h-2 rounded-[1px] border shrink-0 transition-colors ${
+                        item.done ? "bg-azure border-azure" : item.indicator
+                      }`}
+                    />
+                    <span
+                      className={`text-xs font-sans truncate transition-all ${
+                        item.done ? "line-through text-white/40" : "text-white/90"
+                      }`}
+                    >
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-white/40 ml-2 shrink-0 group-hover:text-white/70 transition-colors">
+                  <span className="text-[10px] font-mono text-white/40 ml-2 shrink-0 group-hover:text-white/70 transition-colors">
                     {item.time}
                   </span>
                 </div>
@@ -213,28 +165,7 @@ export default function ShareableCard() {
         </div>
 
         {/* Card Footer Action Bar */}
-        <div className="p-4 bg-white/[0.02] border-t border-white/10 flex items-center justify-between">
-          <span className="text-[11px] text-white/40 font-mono">Interactive Live Snapshot</span>
-          <button
-            onClick={handleExport}
-            className="px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all active:scale-95 cursor-pointer flex items-center gap-2"
-          >
-            {copied ? (
-              <>
-                <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                <span>Link Copied!</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
-                </svg>
-                <span>Share Card Link</span>
-              </>
-            )}
-          </button>
+        <div className="bg-white/[0.01] border-t border-white/10 h-9">
         </div>
       </motion.div>
     </div>
