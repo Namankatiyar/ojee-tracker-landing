@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "OJEE-Tracker | Premium JEE, NEET Study Command Centre",
     description:
-      "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE, NEET & OJEE aspirants.",
+      "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE, NEET aspirants.",
     url: "https://ojeet.tech",
     siteName: "OJEE-Tracker",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "OJEE-Tracker | Premium JEE, NEET & OJEE Study Command Centre",
+    title: "OJEE-Tracker | Premium JEE, NEET  Study Command Centre",
     description:
       "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE, NEET & OJEE aspirants.",
     images: ["/og_image.png"],
@@ -67,7 +67,7 @@ export default function LandingPage() {
     "operatingSystem": "All",
     "applicationCategory": "EducationalApplication",
     "description":
-      "An offline-first study command center built for JEE, NEET & OJEE aspirants. Track syllabus, analyze progress, log study hours, and connect with peers.",
+      "An offline-first study command center built for JEE, NEET aspirants. Track syllabus, analyze progress, log study hours, and connect with peers.",
     "offers": {
       "@type": "Offer",
       "price": "0",

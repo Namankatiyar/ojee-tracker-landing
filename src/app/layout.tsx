@@ -16,7 +16,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL("https://ojeet.tech"),
   title: {
-    default: "OJEE-Tracker | Premium JEE, NEET & OJEE Study Command Centre",
+    default: "OJEE-Tracker | Premium JEE, NEET Study Command Centre",
     template: "%s | OJEE-Tracker",
   },
   description: "Track syllabus, analyze progress, log study hours, and connect with peers. An offline-first study command center built for JEE, NEET & OJEE aspirants.",
@@ -62,7 +62,7 @@ export default function RootLayout({
 
             <div className="flex items-center gap-4">
               <a
-                href="https://github.com/Namankatiyar/ojee-tracker"
+                href="https://github.com/Namankatiyar/ojeet-tracker"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 text-white/60 transition-colors hover:text-white"
@@ -95,9 +95,6 @@ export default function RootLayout({
           </div>
         </header>
         <div className="flex flex-1 flex-col">{children}</div>
-        {/* impeccable-live-start */}
-        <script async src="http://localhost:8401/live.js"></script>
-        {/* impeccable-live-end */}
       </body>
     </html>
   );

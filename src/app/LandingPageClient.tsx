@@ -130,7 +130,7 @@ export default function LandingPageClient() {
                 <Icons.ExternalLink />
               </a>
               <a 
-                href="https://github.com/Namankatiyar/ojee-tracker"
+                href="https://github.com/Namankatiyar/ojeet-tracker"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-8 h-12 rounded bg-white/5 border border-white/20 text-white font-medium text-base hover:bg-white/10 hover:border-white/40 transition-colors"
