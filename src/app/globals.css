@@ -7,15 +7,76 @@
   --color-physics: #6366f1;
   --color-chemistry: #10b981;
   --color-maths: #f59e0b;
+  --card-bg: rgba(10, 10, 10, 0.6);
+  --card-bg-solid: #000000;
+  --card-bg-hover: rgba(20, 20, 20, 0.8);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --muted-text: rgba(255, 255, 255, 0.6);
+  --muted-text-strong: rgba(255, 255, 255, 0.4);
+  --subtle-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.4);
+  --grid-line: rgba(255, 255, 255, 0.02);
+  --grid-line-accent: rgba(0, 127, 255, 0.25);
+  --grid-spotlight-opacity: 0.05;
+  --cockpit-card-bg: rgba(10, 10, 10, 0.6);
+  --cockpit-border: rgba(255, 255, 255, 0.05);
+  --cockpit-border-hover: rgba(255, 255, 255, 0.2);
+  --bento-gap-bg: rgba(255, 255, 255, 0.08);
+  --table-row-bg: rgba(255, 255, 255, 0.01);
+  --table-row-bg-hover: rgba(255, 255, 255, 0.03);
+  --header-bg: rgba(0, 0, 0, 0.8);
+  --footer-border: rgba(255, 255, 255, 0.05);
+  --gradient-start: #000000;
+  --gradient-end: transparent;
+}
+
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --color-azure: #0066cc;
+  --card-bg: rgba(245, 245, 245, 0.8);
+  --card-bg-solid: #f8f8f8;
+  --card-bg-hover: rgba(235, 235, 235, 0.9);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --muted-text: rgba(0, 0, 0, 0.55);
+  --muted-text-strong: rgba(0, 0, 0, 0.4);
+  --subtle-border: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --grid-line: rgba(0, 0, 0, 0.06);
+  --grid-line-accent: rgba(0, 102, 204, 0.3);
+  --grid-spotlight-opacity: 0.08;
+  --cockpit-card-bg: rgba(250, 250, 250, 0.9);
+  --cockpit-border: rgba(0, 0, 0, 0.06);
+  --cockpit-border-hover: rgba(0, 0, 0, 0.15);
+  --bento-gap-bg: rgba(0, 0, 0, 0.06);
+  --table-row-bg: rgba(0, 0, 0, 0.02);
+  --table-row-bg-hover: rgba(0, 0, 0, 0.04);
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --footer-border: rgba(0, 0, 0, 0.06);
+  --gradient-start: #ffffff;
+  --gradient-end: transparent;
 }
 
 @theme {
-  --color-background: #000000;
-  --color-foreground: #ffffff;
-  --color-azure: #007fff;
-  --color-physics: #6366f1;
-  --color-chemistry: #10b981;
-  --color-maths: #f59e0b;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-azure: var(--color-azure);
+  --color-physics: var(--color-physics);
+  --color-chemistry: var(--color-chemistry);
+  --color-maths: var(--color-maths);
+  --color-card-bg: var(--card-bg);
+  --color-card-solid: var(--card-bg-solid);
+  --color-card-hover: var(--card-bg-hover);
+  --color-card-border: var(--card-border);
+  --color-muted-text: var(--muted-text);
+  --color-muted-text-strong: var(--muted-text-strong);
+  --color-subtle-border: var(--subtle-border);
+  --color-input-bg: var(--input-bg);
+  --color-bento-gap-bg: var(--bento-gap-bg);
+  --color-table-row-bg: var(--table-row-bg);
+  --color-table-row-bg-hover: var(--table-row-bg-hover);
+  --color-header-bg: var(--header-bg);
+  --color-footer-border: var(--footer-border);
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-display: var(--font-outfit), sans-serif;
 }
@@ -29,8 +90,12 @@ body {
 /* OJEE Bento Dashboard Cockpit Styles */
 .cockpit-container {
   --accent-color: rgba(0, 127, 255, 1);
-  --card-bg: rgba(10, 10, 10, 0.6);
-  --border-color: rgba(255, 255, 255, 0.05);
+  --card-bg: var(--cockpit-card-bg);
+  --border-color: var(--cockpit-border);
+}
+
+[data-theme="light"] .cockpit-container {
+  --accent-color: rgba(0, 102, 204, 1);
 }
 
 .cockpit-container .bento-card {
@@ -44,7 +109,7 @@ body {
 }
 
 .cockpit-container .bento-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--cockpit-border-hover);
 }
 
 .cockpit-container .bento-card h3 {
@@ -91,7 +156,5 @@ body {
   left: 0.75rem;
   font-family: var(--font-geist-mono), monospace;
   font-size: 7px;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--muted-text-strong);
 }
-
-

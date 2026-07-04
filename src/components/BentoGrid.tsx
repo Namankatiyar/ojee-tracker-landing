@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ChartJS from "chart.js/auto";
 import type { ChartConfiguration, TooltipItem } from "chart.js";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const easeOutExpo = [0.16, 1, 0.3, 1] as const;
 const pressTransition = { type: "spring" as const, stiffness: 520, damping: 32 };
@@ -85,8 +86,10 @@ function BentoCard({
 }
 
 export default function BentoGrid() {
-  // Cockpit States
   const reduceMotion = useReducedMotion() ?? false;
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   const [clockMode, setClockMode] = useState<"pomo" | "stopwatch" | "custom">("pomo");
   const [clockTime, setClockTime] = useState("25:00");
   const [isClockRunning, setIsClockRunning] = useState(false);
@@ -108,7 +111,6 @@ export default function BentoGrid() {
   ]);
   const [aiInput, setAiInput] = useState("");
 
-  // Daily Reports State
   const [reportMetric, setReportMetric] = useState<ReportMetric>("hours");
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstanceRef = useRef<ChartJS | null>(null);
@@ -138,6 +140,16 @@ export default function BentoGrid() {
     gradient.addColorStop(0.5, "rgba(16, 185, 129, 0.16)");
     gradient.addColorStop(1, "rgba(245, 158, 11, 0.0)");
 
+    const tickColor = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.45)";
+    const borderColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    const gridColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.06)";
+    const legendColor = isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.55)";
+    const tooltipBg = isDark ? "#000000" : "#ffffff";
+    const tooltipTitle = isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.55)";
+    const tooltipBody = isDark ? "#ffffff" : "#0a0a0a";
+    const tooltipBorder = isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.12)";
+    const pointBg = isDark ? "#000000" : "#ffffff";
+
     const dataMap: Record<ReportMetric, ReportChart> = {
       hours: {
         type: "line",
@@ -151,13 +163,13 @@ export default function BentoGrid() {
             backgroundColor: gradient,
             fill: true,
             tension: 0.25,
-            pointBackgroundColor: "#000000",
+            pointBackgroundColor: pointBg,
             pointBorderColor: "#6366f1",
             pointBorderWidth: 1.5,
             pointRadius: 3.5,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: "#6366f1",
-            pointHoverBorderColor: "#ffffff",
+            pointHoverBorderColor: isDark ? "#ffffff" : "#0a0a0a",
           }
         ],
         max: 14,
@@ -202,49 +214,28 @@ export default function BentoGrid() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 0 },
         layout: {
-          padding: {
-            top: 10,
-            right: 10,
-            left: 0,
-            bottom: 0
-          }
+          padding: { top: 10, right: 10, left: 0, bottom: 0 }
         },
         scales: {
           x: {
             stacked: currentData.stacked,
-            grid: {
-              display: false
-            },
-            ticks: {
-              color: "rgba(255, 255, 255, 0.4)",
-              font: {
-                family: "monospace",
-                size: 9
-              }
-            },
-            border: {
-              color: "rgba(255, 255, 255, 0.1)"
-            }
+            grid: { display: false },
+            ticks: { color: tickColor, font: { family: "monospace", size: 9 } },
+            border: { color: borderColor }
           },
           y: {
             stacked: currentData.stacked,
             min: 0,
             max: currentData.max,
-            grid: {
-              color: "rgba(255, 255, 255, 0.05)",
-            },
+            grid: { color: gridColor },
             ticks: {
-              color: "rgba(255, 255, 255, 0.4)",
-              font: {
-                family: "monospace",
-                size: 9
-              },
+              color: tickColor,
+              font: { family: "monospace", size: 9 },
               callback: (val: string | number) => `${val}h`
             },
-            border: {
-              display: false
-            }
+            border: { display: false }
           }
         },
         plugins: {
@@ -253,21 +244,18 @@ export default function BentoGrid() {
             position: "top",
             align: "end",
             labels: {
-              color: "rgba(255, 255, 255, 0.6)",
+              color: legendColor,
               boxWidth: 8,
               boxHeight: 8,
               usePointStyle: true,
-              font: {
-                family: "monospace",
-                size: 9
-              }
+              font: { family: "monospace", size: 9 }
             }
           },
           tooltip: {
-            backgroundColor: "#000000",
-            titleColor: "rgba(255, 255, 255, 0.6)",
-            bodyColor: "#ffffff",
-            borderColor: "rgba(255, 255, 255, 0.15)",
+            backgroundColor: tooltipBg,
+            titleColor: tooltipTitle,
+            bodyColor: tooltipBody,
+            borderColor: tooltipBorder,
             borderWidth: 1,
             padding: 8,
             displayColors: currentData.stacked,
@@ -284,9 +272,8 @@ export default function BentoGrid() {
         chartInstanceRef.current.destroy();
       }
     };
-  }, [reportMetric]);
+  }, [reportMetric, isDark]);
 
-  // Study clock countdown / stopwatch interval logic
   useEffect(() => {
     if (!isClockRunning) return;
 
@@ -343,17 +330,17 @@ export default function BentoGrid() {
         viewport={{ once: true, amount: 0.15 }}
       >
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-12 gap-[1px] bg-white/[0.08] border border-white/[0.08] rounded-xl overflow-hidden"
+          className="grid grid-cols-1 md:grid-cols-12 gap-[1px] bg-bento-gap-bg border border-subtle-border rounded-xl overflow-hidden"
           initial={reduceMotion ? false : "hidden"}
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
         >
         {/* Syllabus Tracker */}
-        <BentoCard index={0} reduceMotion={reduceMotion} className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] border border-white/10 rounded-lg transition-colors duration-300">
-          <div className="flex justify-between items-center border-b border-white/5 pb-3.5">
+        <BentoCard index={0} reduceMotion={reduceMotion} className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid border border-subtle-border rounded-lg transition-colors duration-300">
+          <div className="flex justify-between items-center border-b border-subtle-border pb-3.5">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-white/40">Granular Syllabus Matrix</span>
-              <h3 className="text-xl font-bold tracking-tight mt-1 text-white">Syllabus Tracker</h3>
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted-text-strong">Granular Syllabus Matrix</span>
+              <h3 className="text-xl font-bold tracking-tight mt-1 text-foreground">Syllabus Tracker</h3>
             </div>
           </div>
 
@@ -367,16 +354,16 @@ export default function BentoGrid() {
                   layout
                   whileHover={reduceMotion ? undefined : { x: 4, backgroundColor: theme.soft }}
                   transition={pressTransition}
-                  className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-white/5 bg-white/[0.01] hover:border-white/10 transition-colors gap-3"
+                  className="flex flex-col lg:flex-row lg:items-center justify-between p-3 rounded border border-subtle-border bg-table-row-bg hover:border-card-border transition-colors gap-3"
                 >
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] uppercase tracking-wider font-mono font-semibold" style={{ color: theme.color }}>
                         {theme.label}
                       </span>
-                      <span className="text-xs font-semibold text-white">{item.topic}</span>
+                      <span className="text-xs font-semibold text-foreground">{item.topic}</span>
                     </div>
-                    <span className="text-[10px] text-white/50 mt-0.5">{item.sub}</span>
+                    <span className="text-[10px] text-muted-text mt-0.5">{item.sub}</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     {syllabusNodes.map((node, nIdx) => (
@@ -391,7 +378,7 @@ export default function BentoGrid() {
                         style={
                           item.done[nIdx]
                             ? { backgroundColor: theme.soft, borderColor: theme.color, color: theme.color }
-                            : { borderColor: theme.border, color: "rgba(255,255,255,0.42)" }
+                            : { borderColor: theme.border, color: "var(--muted-text-strong)" }
                         }
                         className="px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider"
                       >
@@ -418,7 +405,7 @@ export default function BentoGrid() {
             })}
           </div>
 
-          <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
+          <div className="flex justify-between items-center text-[10px] text-muted-text-strong pt-2 border-t border-subtle-border">
             <span>Track daily syllabus milestones.</span>
             <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1">
               + Add Custom Topic
@@ -427,9 +414,9 @@ export default function BentoGrid() {
         </BentoCard>
 
         {/* Study Clock Engine */}
-        <BentoCard index={1} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={1} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Study Clock Engine</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Study Clock Engine</span>
             <span className="flex h-2 w-2 relative">
               <motion.span
                 className="absolute inline-flex h-full w-full rounded-full bg-azure-dynamic"
@@ -441,16 +428,16 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex flex-col items-center py-2">
-            <div className="flex rounded bg-white/5 p-0.5 text-[10px] font-semibold border border-white/10 mb-4 z-10">
+            <div className="flex rounded bg-foreground/5 p-0.5 text-[10px] font-semibold border border-subtle-border mb-4 z-10">
               {(["pomo", "stopwatch", "custom"] as const).map((mode) => (
                 <motion.button
-                  key={mode} 
+                  key={mode}
                   onClick={() => {
                     setClockMode(mode);
                     setClockTime(mode === "pomo" ? "25:00" : mode === "stopwatch" ? "00:00:00" : "45:00");
                   }}
                   whileTap={{ scale: 0.94 }}
-                  className={`relative px-3 py-1 rounded capitalize cursor-pointer ${clockMode === mode ? "text-white" : "text-white/60"}`}
+                  className={`relative px-3 py-1 rounded capitalize cursor-pointer ${clockMode === mode ? "text-foreground" : "text-muted-text"}`}
                 >
                   {clockMode === mode && (
                     <motion.span layoutId="clock-mode-pill" className="absolute inset-0 rounded bg-azure-dynamic" transition={pressTransition} />
@@ -464,12 +451,12 @@ export default function BentoGrid() {
               key={clockTime}
               initial={reduceMotion ? { opacity: 0.7 } : { opacity: 0, y: -8, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              className="text-4xl font-mono font-bold tracking-tight text-white mb-2"
+              className="text-4xl font-mono font-bold tracking-tight text-foreground mb-2"
             >
               {clockTime}
             </motion.div>
             <motion.span
-              animate={{ color: isClockRunning ? "rgba(0,127,255,0.9)" : "rgba(255,255,255,0.4)" }}
+              animate={{ color: isClockRunning ? "rgba(0,127,255,0.9)" : "var(--muted-text-strong)" }}
               className="text-[10px] uppercase tracking-widest"
             >
               {isClockRunning ? "Focus Session Active" : "Paused"}
@@ -481,7 +468,7 @@ export default function BentoGrid() {
               onClick={() => setIsClockRunning(!isClockRunning)}
               whileHover={reduceMotion ? undefined : { scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 h-9 rounded bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all cursor-pointer"
+              className="flex-1 h-9 rounded bg-foreground text-background font-semibold text-xs hover:opacity-90 transition-all cursor-pointer"
             >
               {isClockRunning ? "Pause" : "Start"}
             </motion.button>
@@ -490,9 +477,9 @@ export default function BentoGrid() {
                 setIsClockRunning(false);
                 setClockTime(clockMode === "pomo" ? "25:00" : clockMode === "stopwatch" ? "00:00:00" : "45:00");
               }}
-              whileHover={reduceMotion ? undefined : { scale: 1.03, borderColor: "rgba(255,255,255,0.28)" }}
+              whileHover={reduceMotion ? undefined : { scale: 1.03, borderColor: "var(--subtle-border)" }}
               whileTap={{ scale: 0.95 }}
-              className="px-3 h-9 rounded border border-white/10 text-xs text-white/60 hover:text-white transition-all cursor-pointer"
+              className="px-3 h-9 rounded border border-subtle-border text-xs text-muted-text hover:text-foreground transition-all cursor-pointer"
             >
               Reset
             </motion.button>
@@ -500,10 +487,10 @@ export default function BentoGrid() {
         </BentoCard>
 
         {/* Frictionless Weekly Planner */}
-        <BentoCard index={2} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={2} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Frictionless Planner</span>
-            <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Weekly Study Tasks</h3>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Frictionless Planner</span>
+            <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Weekly Study Tasks</h3>
           </div>
 
           <div className="flex flex-col gap-2 my-3 max-h-[110px] overflow-y-auto pr-1">
@@ -517,11 +504,11 @@ export default function BentoGrid() {
                 exit={{ opacity: 0, x: 12, scale: 0.98 }}
                 className="flex items-center gap-2 text-xs"
               >
-                <input 
-                  type="checkbox" 
-                  checked={t.done} 
+                <input
+                  type="checkbox"
+                  checked={t.done}
                   onChange={() => setPlannerTasks(prev => prev.map(item => item.id === t.id ? { ...item, done: !item.done } : item))}
-                  className="rounded border-white/20 bg-black text-azure-dynamic focus:ring-0 w-3.5 h-3.5"
+                  className="rounded border-subtle-border bg-background text-azure-dynamic focus:ring-0 w-3.5 h-3.5"
                 />
                 <div className="flex min-w-0 items-center gap-2">
                   {t.subject && (
@@ -538,7 +525,7 @@ export default function BentoGrid() {
                   )}
                   <motion.span
                     animate={{ opacity: t.done ? 0.45 : 0.85, x: t.done && !reduceMotion ? 3 : 0 }}
-                    className={t.done ? "min-w-0 truncate line-through text-white/40" : "min-w-0 truncate text-white/80"}
+                    className={t.done ? "min-w-0 truncate line-through text-muted-text-strong" : "min-w-0 truncate text-foreground/80"}
                   >
                     {t.text}
                   </motion.span>
@@ -548,31 +535,31 @@ export default function BentoGrid() {
             </AnimatePresence>
           </div>
 
-          <form 
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               if (!plannerInput.trim()) return;
               setPlannerTasks(prev => [...prev, { id: Date.now(), text: plannerInput, done: false }]);
               setPlannerInput("");
             }}
-            className="flex gap-2 border border-white/10 rounded px-2.5 py-1.5 bg-black/40 z-10"
+            className="flex gap-2 border border-subtle-border rounded px-2.5 py-1.5 bg-input-bg z-10"
           >
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={plannerInput}
               onChange={(e) => setPlannerInput(e.target.value)}
-              placeholder="> Add task to weekly planner..." 
-              className="bg-transparent border-0 outline-none p-0 text-xs text-white placeholder-white/30 flex-1 ring-0 focus:ring-0"
+              placeholder="> Add task to weekly planner..."
+              className="bg-transparent border-0 outline-none p-0 text-xs text-foreground placeholder-muted-text-strong flex-1 ring-0 focus:ring-0"
             />
-            <motion.button type="submit" whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }} className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-white">Add</motion.button>
+            <motion.button type="submit" whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }} className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-foreground">Add</motion.button>
           </form>
         </BentoCard>
 
         {/* Mock Score Log */}
-        <BentoCard index={3} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={3} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Mock Test Scores</span>
-            <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Scores Ledger</h3>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Mock Test Scores</span>
+            <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Scores Ledger</h3>
           </div>
 
           <div className="flex flex-col gap-2 my-2">
@@ -589,7 +576,7 @@ export default function BentoGrid() {
                     ? undefined
                     : { x: 3, borderColor: subjectThemes[item.subject].border, backgroundColor: subjectThemes[item.subject].soft }
                 }
-                className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs"
+                className="flex items-center justify-between p-2 rounded border border-subtle-border bg-table-row-bg text-xs"
               >
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
@@ -605,13 +592,13 @@ export default function BentoGrid() {
                         {subjectThemes[item.subject].label}
                       </span>
                     )}
-                    <span className="font-semibold text-white/90">{item.name}</span>
+                    <span className="font-semibold text-foreground/90">{item.name}</span>
                   </div>
-                  <span className="text-[9px] text-white/40">{item.date}</span>
+                  <span className="text-[9px] text-muted-text-strong">{item.date}</span>
                 </div>
                 <motion.span
-                  initial={reduceMotion ? false : { scale: 1.18, color: "#ffffff" }}
-                  animate={{ scale: 1, color: item.subject ? subjectThemes[item.subject].color : "#007fff" }}
+                  initial={reduceMotion ? false : { scale: 1.18, color: "var(--foreground)" }}
+                  animate={{ scale: 1, color: item.subject ? subjectThemes[item.subject].color : "var(--color-azure)" }}
                   className="font-mono text-azure-dynamic font-bold"
                 >
                   {item.score} / {item.max}
@@ -621,7 +608,7 @@ export default function BentoGrid() {
             </AnimatePresence>
           </div>
 
-          <form 
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               if (!mockInputName.trim() || !mockInputScore.trim()) return;
@@ -632,29 +619,29 @@ export default function BentoGrid() {
             className="flex flex-col gap-1.5 z-10"
           >
             <div className="flex gap-1.5">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={mockInputName}
                 onChange={(e) => setMockInputName(e.target.value)}
-                placeholder="Test Name" 
-                className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] text-white placeholder-white/30 flex-1 outline-none"
+                placeholder="Test Name"
+                className="bg-foreground/5 border border-subtle-border rounded px-2 py-1 text-[10px] text-foreground placeholder-muted-text-strong flex-1 outline-none"
               />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={mockInputScore}
                 onChange={(e) => setMockInputScore(e.target.value)}
-                placeholder="Score" 
-                className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] text-white placeholder-white/30 w-16 outline-none"
+                placeholder="Score"
+                className="bg-foreground/5 border border-subtle-border rounded px-2 py-1 text-[10px] text-foreground placeholder-muted-text-strong w-16 outline-none"
               />
             </div>
-            <motion.button type="submit" whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "rgba(255,255,255,0.55)" }} whileTap={{ scale: 0.96 }} className="w-full h-7 rounded border border-white/20 hover:border-white/50 text-[10px] font-semibold text-white tracking-wider uppercase transition-colors">
+            <motion.button type="submit" whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }} whileTap={{ scale: 0.96 }} className="w-full h-7 rounded border border-subtle-border hover:border-card-border text-[10px] font-semibold text-foreground tracking-wider uppercase transition-colors">
               Log Mock Score
             </motion.button>
           </form>
         </BentoCard>
 
         {/* AI IITian Planner Agent */}
-        <BentoCard index={4} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={4} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <motion.div
@@ -662,7 +649,7 @@ export default function BentoGrid() {
                 animate={reduceMotion ? undefined : { scale: [1, 1.7, 1], opacity: [1, 0.55, 1] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
               />
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/40">BLUE AI</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">BLUE AI</span>
             </div>
             <span className="text-[9px] text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono bg-emerald-500/10">API KEY ACTIVE</span>
           </div>
@@ -676,52 +663,52 @@ export default function BentoGrid() {
                 initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: msg.sender === "agent" ? -14 : 14, filter: "blur(4px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, scale: 0.97 }}
-                className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-white/5 text-white/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-white/90 self-end max-w-[90%]"}`}
+                className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-foreground/5 text-foreground/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-foreground/90 self-end max-w-[90%]"}`}
               >
-                <span className="font-bold text-[12px] uppercase tracking-wider text-white/40">{msg.sender === "agent" ? "AI Planner" : "You"}</span>
+                <span className="font-bold text-[12px] uppercase tracking-wider text-muted-text-strong">{msg.sender === "agent" ? "AI Planner" : "You"}</span>
                 <p className="leading-tight">{msg.text}</p>
               </motion.div>
               ))}
             </AnimatePresence>
           </div>
 
-          <form 
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               if (!aiInput.trim()) return;
               setAiChat(prev => [
-                ...prev, 
+                ...prev,
                 { sender: "user", text: aiInput },
                 { sender: "agent", text: "Evaluating. Rotational physics scores indicate weakness in torque and rolling dynamics. Plan: 10 mock questions scheduled." }
               ]);
               setAiInput("");
             }}
-            className="flex gap-2 border border-white/10 rounded px-2 py-1.5 bg-black/40 z-10"
+            className="flex gap-2 border border-subtle-border rounded px-2 py-1.5 bg-input-bg z-10"
           >
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={aiInput}
               onChange={(e) => setAiInput(e.target.value)}
-              placeholder="Ask AI agent (e.g. Plan my day)..." 
-              className="bg-transparent border-0 outline-none p-0 text-xs text-white placeholder-white/30 flex-1 ring-0 focus:ring-0"
+              placeholder="Ask AI agent (e.g. Plan my day)..."
+              className="bg-transparent border-0 outline-none p-0 text-xs text-foreground placeholder-muted-text-strong flex-1 ring-0 focus:ring-0"
             />
           </form>
         </BentoCard>
 
         {/* Daily Reports Page Widget */}
-        <BentoCard index={5} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-[#000000] border border-white/10 rounded-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+        <BentoCard index={5} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-card-solid border border-subtle-border rounded-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-subtle-border pb-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">Study Progress Reports</span>
-              <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Daily Reports Page</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-text-strong">Study Progress Reports</span>
+              <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Daily Reports Page</h3>
             </div>
-            <div className="flex items-center gap-1 bg-white/5 border border-white/10 p-0.5 rounded text-[10px]">
+            <div className="flex items-center gap-1 bg-foreground/5 border border-subtle-border p-0.5 rounded text-[10px]">
               {(["hours", "weekly"] as const).map((metric) => (
                 <motion.button
                   key={metric}
                   onClick={() => setReportMetric(metric)}
                   whileTap={{ scale: 0.94 }}
-                  className={`relative px-2 py-0.5 rounded capitalize font-semibold cursor-pointer ${reportMetric === metric ? "text-white" : "text-white/50 hover:text-white"}`}
+                  className={`relative px-2 py-0.5 rounded capitalize font-semibold cursor-pointer ${reportMetric === metric ? "text-foreground" : "text-muted-text hover:text-foreground"}`}
                 >
                   {reportMetric === metric && <motion.span layoutId="report-metric-pill" className="absolute inset-0 rounded bg-azure" transition={pressTransition} />}
                   <span className="relative z-10">{metric}</span>
@@ -739,7 +726,7 @@ export default function BentoGrid() {
             <canvas ref={chartRef} className="w-full h-full" />
           </motion.div>
 
-          <div className="flex justify-between items-center text-[10px] text-white/40 pt-2 border-t border-white/5">
+          <div className="flex justify-between items-center text-[10px] text-muted-text-strong pt-2 border-t border-subtle-border">
             <span className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
               {reportMetric === "hours" && (
                 <>
@@ -764,13 +751,13 @@ export default function BentoGrid() {
         </BentoCard>
 
         {/* Friends System Widget */}
-        <BentoCard index={6} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-[#000000] hover:bg-[#080808] border border-white/10 rounded-lg transition-colors duration-300">
+        <BentoCard index={6} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
           <div className="flex justify-between items-start">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Accountability Network</span>
-              <h3 className="text-base font-bold tracking-tight mt-0.5 text-white">Friends Progress Feed</h3>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Accountability Network</span>
+              <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Friends Progress Feed</h3>
             </div>
-            <span className="text-[10px] text-white/40">3 Friends Online</span>
+            <span className="text-[10px] text-muted-text-strong">3 Friends Online</span>
           </div>
 
           <div className="flex flex-col gap-2 my-2">
@@ -785,27 +772,27 @@ export default function BentoGrid() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.06, duration: 0.35, ease: easeOutExpo }}
-                whileHover={reduceMotion ? undefined : { x: 4, borderColor: "rgba(0,127,255,0.25)", backgroundColor: "rgba(255,255,255,0.035)" }}
-                className="flex items-center justify-between p-2 rounded border border-white/5 bg-white/[0.01] text-xs"
+                whileHover={reduceMotion ? undefined : { x: 4, borderColor: "rgba(0,127,255,0.25)", backgroundColor: "var(--table-row-bg-hover)" }}
+                className="flex items-center justify-between p-2 rounded border border-subtle-border bg-table-row-bg text-xs"
               >
                 <div className="flex items-center gap-2">
                   <motion.span
-                    className={`w-1.5 h-1.5 rounded-full ${item.online ? "bg-emerald-500" : "bg-white/20"}`}
+                    className={`w-1.5 h-1.5 rounded-full ${item.online ? "bg-emerald-500" : "bg-foreground/20"}`}
                     animate={item.online && !reduceMotion ? { scale: [1, 1.7, 1] } : undefined}
                     transition={{ duration: 1.5, repeat: Infinity, delay: idx * 0.25 }}
                   />
-                  <span className="font-semibold text-white/80">{item.name}</span>
+                  <span className="font-semibold text-foreground/80">{item.name}</span>
                 </div>
-                <span className="text-[10px] text-white/40 font-mono">{item.status}</span>
+                <span className="text-[10px] text-muted-text-strong font-mono">{item.status}</span>
               </motion.div>
             ))}
           </div>
 
           <div className="flex gap-2 w-full z-10">
-            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "rgba(255,255,255,0.22)" }} whileTap={{ scale: 0.96 }} className="flex-1 h-8 rounded border border-white/5 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
+            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }} whileTap={{ scale: 0.96 }} className="flex-1 h-8 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer">
               Challenge Friends
             </motion.button>
-            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.04, borderColor: "rgba(0,127,255,0.45)" }} whileTap={{ scale: 0.96 }} className="h-8 px-3 rounded border border-white/10 hover:bg-white/5 text-[10px] font-semibold text-white/80 transition-all cursor-pointer">
+            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.04, borderColor: "rgba(0,127,255,0.45)" }} whileTap={{ scale: 0.96 }} className="h-8 px-3 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer">
               + Connect
             </motion.button>
           </div>

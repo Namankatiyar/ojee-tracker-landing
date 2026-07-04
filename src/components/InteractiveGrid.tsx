@@ -2,19 +2,42 @@
 
 import { useEffect, useRef } from "react";
 import { useAnimationFrame } from "framer-motion";
+import { useTheme } from "next-themes";
+
+const lightColors = {
+  cellFill: "rgba(0, 102, 204, 0.10)",
+  cellStroke: "rgba(0, 102, 204, 0.40)",
+  cellShadow: "rgba(0, 102, 204, 0.65)",
+  gridLine: "rgba(0, 0, 0, 0.06)",
+  spotlightStroke0: "rgba(0, 102, 204, 0.35)",
+  spotlightStroke1: "rgba(0, 102, 204, 0.12)",
+  spotlightStroke2: "rgba(0, 102, 204, 0)",
+  glow0: "rgba(0, 102, 204, 0.07)",
+  glow1: "rgba(0, 102, 204, 0.02)",
+  glow2: "rgba(255, 255, 255, 0)",
+};
+
+const darkColors = {
+  cellFill: "rgba(0, 127, 255, 0.08)",
+  cellStroke: "rgba(0, 127, 255, 0.35)",
+  cellShadow: "rgba(0, 127, 255, 0.6)",
+  gridLine: "rgba(255, 255, 255, 0.02)",
+  spotlightStroke0: "rgba(0, 127, 255, 0.25)",
+  spotlightStroke1: "rgba(0, 127, 255, 0.08)",
+  spotlightStroke2: "rgba(0, 127, 255, 0)",
+  glow0: "rgba(0, 127, 255, 0.05)",
+  glow1: "rgba(0, 127, 255, 0.01)",
+  glow2: "rgba(0, 0, 0, 0)",
+};
 
 export default function InteractiveGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
 
-  // Track the single active cell under the cursor
   const activeCellRef = useRef<{ col: number; row: number; key: string } | null>(null);
-  
-  // Track decaying cell trails
   const glowCellsRef = useRef<Map<string, { col: number; row: number; opacity: number }>>(new Map());
   const cellSize = 56;
-
-  // Use ref to track the last animation time to compute precise delta time
   const lastTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -27,7 +50,7 @@ export default function InteractiveGrid() {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      const isInside = 
+      const isInside =
         e.clientX >= rect.left &&
         e.clientX <= rect.right &&
         e.clientY >= rect.top &&
@@ -38,9 +61,7 @@ export default function InteractiveGrid() {
         const row = Math.floor(y / cellSize);
         const key = `${col},${row}`;
 
-        // If cursor moves to a new cell
         if (!activeCellRef.current || activeCellRef.current.key !== key) {
-          // Decay the previous active cell
           if (activeCellRef.current) {
             glowCellsRef.current.set(activeCellRef.current.key, {
               col: activeCellRef.current.col,
@@ -48,11 +69,9 @@ export default function InteractiveGrid() {
               opacity: 1.0,
             });
           }
-          // Set new active cell
           activeCellRef.current = { col, row, key };
         }
       } else {
-        // Decay the active cell if cursor leaves the grid bounding box
         if (activeCellRef.current) {
           glowCellsRef.current.set(activeCellRef.current.key, {
             col: activeCellRef.current.col,
@@ -65,7 +84,6 @@ export default function InteractiveGrid() {
     }
 
     function handleMouseLeave() {
-      // Decay the active cell if cursor leaves the document window
       if (activeCellRef.current) {
         glowCellsRef.current.set(activeCellRef.current.key, {
           col: activeCellRef.current.col,
@@ -85,7 +103,6 @@ export default function InteractiveGrid() {
     };
   }, []);
 
-  // Use Framer Motion's requestAnimationFrame wrapper
   useAnimationFrame((time) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -98,14 +115,12 @@ export default function InteractiveGrid() {
 
     if (clientWidth === 0 || clientHeight === 0) return;
 
-    // Auto-resize canvas buffer if client dimensions changed
     if (canvas.width !== clientWidth * dpr || canvas.height !== clientHeight * dpr) {
       canvas.width = clientWidth * dpr;
       canvas.height = clientHeight * dpr;
       ctx.scale(dpr, dpr);
     }
 
-    // Initialize or compute deltaTime securely
     if (lastTimeRef.current === null) {
       lastTimeRef.current = time;
       return;
@@ -115,23 +130,21 @@ export default function InteractiveGrid() {
 
     const width = clientWidth;
     const height = clientHeight;
+    const colors = resolvedTheme === "light" ? lightColors : darkColors;
 
-    // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Static spotlight coordinates centered at the top touching the header
     const centerX = width / 2;
     const centerY = 0;
 
-    // Helper function to draw a cell (fill + border glow)
     const drawCell = (col: number, row: number, opacity: number) => {
-      ctx.fillStyle = `rgba(0, 127, 255, ${0.08 * opacity})`;
+      ctx.fillStyle = colors.cellFill.replace(/[\d.]+\)$/, `${parseFloat(colors.cellFill.match(/[\d.]+\)$/)?.[0] || "0.08") * opacity})`);
       ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
 
       ctx.save();
-      ctx.strokeStyle = `rgba(0, 127, 255, ${0.35 * opacity})`;
+      ctx.strokeStyle = colors.cellStroke.replace(/[\d.]+\)$/, `${parseFloat(colors.cellStroke.match(/[\d.]+\)$/)?.[0] || "0.35") * opacity})`);
       ctx.lineWidth = 1.5;
-      ctx.shadowColor = `rgba(0, 127, 255, ${0.6 * opacity})`;
+      ctx.shadowColor = colors.cellShadow.replace(/[\d.]+\)$/, `${parseFloat(colors.cellShadow.match(/[\d.]+\)$/)?.[0] || "0.6") * opacity})`);
       ctx.shadowBlur = 8;
       ctx.strokeRect(
         col * cellSize + 0.5,
@@ -142,28 +155,22 @@ export default function InteractiveGrid() {
       ctx.restore();
     };
 
-    // 1. Draw the active cell (always at 1.0 opacity while hovered)
     if (activeCellRef.current) {
       drawCell(activeCellRef.current.col, activeCellRef.current.row, 1.0);
     }
 
-    // 2. Draw Cell Trails (decaying glows)
     glowCellsRef.current.forEach((cell, key) => {
-      // If the decaying cell becomes active again, skip and delete it from trails
       if (activeCellRef.current && activeCellRef.current.key === key) {
         glowCellsRef.current.delete(key);
         return;
       }
-
       drawCell(cell.col, cell.row, cell.opacity);
-
-      cell.opacity -= deltaTime * 0.0012; // Fade out over ~0.8s
+      cell.opacity -= deltaTime * 0.0012;
       if (cell.opacity <= 0 || isNaN(cell.opacity)) {
         glowCellsRef.current.delete(key);
       }
     });
 
-    // 3. Draw Spotlight Grid Lines (Static centered at top)
     ctx.beginPath();
     for (let x = 0; x <= width; x += cellSize) {
       ctx.moveTo(x + 0.5, 0);
@@ -173,17 +180,16 @@ export default function InteractiveGrid() {
       ctx.moveTo(0, y + 0.5);
       ctx.lineTo(width, y + 0.5);
     }
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+    ctx.strokeStyle = colors.gridLine;
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Draw active spotlight gradient on grid lines
     ctx.save();
-    const spotlightRadius = 380; // Large, beautiful header ambient glow
+    const spotlightRadius = 380;
     const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, spotlightRadius);
-    grad.addColorStop(0, "rgba(0, 127, 255, 0.25)");
-    grad.addColorStop(0.5, "rgba(0, 127, 255, 0.08)");
-    grad.addColorStop(1, "rgba(0, 127, 255, 0)");
+    grad.addColorStop(0, colors.spotlightStroke0);
+    grad.addColorStop(0.5, colors.spotlightStroke1);
+    grad.addColorStop(1, colors.spotlightStroke2);
 
     ctx.strokeStyle = grad;
     ctx.lineWidth = 1;
@@ -199,11 +205,10 @@ export default function InteractiveGrid() {
     ctx.stroke();
     ctx.restore();
 
-    // 4. Spotlight Background Glow (Tech Azure, Static centered at top)
     const glowGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, spotlightRadius * 1.5);
-    glowGrad.addColorStop(0, "rgba(0, 127, 255, 0.05)");
-    glowGrad.addColorStop(0.5, "rgba(0, 127, 255, 0.01)");
-    glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    glowGrad.addColorStop(0, colors.glow0);
+    glowGrad.addColorStop(0.5, colors.glow1);
+    glowGrad.addColorStop(1, colors.glow2);
 
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, width, height);
@@ -213,7 +218,7 @@ export default function InteractiveGrid() {
     <div
       ref={containerRef}
       id="canvas-container"
-      className="absolute inset-0 z-0 w-full h-full pointer-events-none bg-black"
+      className="absolute inset-0 z-0 w-full h-full pointer-events-none bg-background"
     >
       <canvas ref={canvasRef} id="interactive-grid-canvas" className="block w-full h-full pointer-events-none" />
     </div>
