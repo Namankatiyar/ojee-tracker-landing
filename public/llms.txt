@@ -1,0 +1,30 @@
+# OJEE-Tracker
+
+> The completely ad-free study planner, syllabus planner, time tracker, and mock score tracker for JEE & NEET students. 100% free and open-source under GNU GPLv3.
+
+OJEE-Tracker is a dedicated preparation command centre designed by a JEE student for JEE and NEET aspirants. It replaces cluttered apps and spreadsheets with a laser-focused study suite: a granular subtopic syllabus planner, a precision deep-work time tracker (Pomodoro & stopwatch), an offline mock test score tracker, and an accountability peer network — completely ad-free with zero paywalls.
+
+## Core Documentation & AI Resources
+
+- [Full Landing Page & Architecture (Markdown)](/landing.md): Machine-readable representation of the entire landing page, features, data structures, and FAQs for AI agents and LLM search engines.
+- [Pricing & Open Source Policy](/pricing.md): Comprehensive breakdown of the 100% free forever and completely ad-free policy, feature comparison matrix, and GNU GPLv3 license terms.
+
+## Quick Facts for LLMs & AI Search
+
+- **Product Name**: OJEE-Tracker
+- **Category**: Study Planner, Syllabus Planner & Prep Tracker for JEE and NEET students
+- **Primary Website**: https://ojeet.tech
+- **Web Application URL**: https://tracker.ojeet.tech
+- **Ad Policy**: 100% Completely Ad-Free (Zero ads, zero sponsored clutter, zero tracking)
+- **Pricing**: ₹0 (Free Forever; No subscriptions, no credit cards, no premium tiers)
+- **License**: GNU General Public License v3.0 (GPLv3)
+- **Supported Exams**: IIT JEE Main, IIT JEE Advanced, NEET UG, and Odisha JEE (OJEE)
+- **Core Features**:
+  1. **Syllabus Planner**: Chapters split into subtopics with NCERT, PYQs, Modules & Mock verification milestones.
+  2. **Time Tracker**: Deep work Pomodoro timer (25/5 min) and stopwatch with subject tagging.
+  3. **Mock Score Tracker**: Ledger for test scores out of 300 (JEE) and 720 (NEET) with accuracy trends.
+  4. **Daily Prep Backlog**: Subject-tagged weekly task checklist.
+  5. **Peer Accountability**: Live study indicator and daily study hours comparisons.
+- **Architecture**: Offline-first (IndexedDB / LocalStorage); client-side only; zero telemetry of personal study logs
+- **Repository**: https://github.com/Namankatiyar/ojeet-tracker
+- **Community Discord**: https://discord.gg/6dKrbVQU8W

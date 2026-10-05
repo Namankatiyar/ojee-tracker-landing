@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import InteractiveGrid from "../components/InteractiveGrid";
 import BentoGrid from "@/components/BentoGrid";
 import ShareableCard from "@/components/ShareableCard";
+import PricingSection from "@/components/PricingSection";
+import FaqSection from "@/components/FaqSection";
 
 const Icons = {
   Github: () => (
@@ -81,7 +83,7 @@ export default function LandingPageClient() {
                 <span className="w-4.5 h-4.5 rounded-full bg-emerald-600 flex items-center justify-center text-[8px] text-white font-mono font-bold border-0">S</span>
               </div>
               <span className="text-muted-text tracking-wide uppercase text-[10px] flex items-center gap-2">
-                Join 500+ aspirants
+                Join 500+ JEE & NEET Aspirants · 100% Ad-Free
                 <div className="relative flex h-2.5 w-2.5 items-center justify-center">
                   <motion.span
                     className="absolute inline-flex h-full w-full rounded-full bg-azure/70"
@@ -99,14 +101,14 @@ export default function LandingPageClient() {
             </div>
 
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.08] mb-6">
-              Finally, a Planner That Gets It.
-              <span className="block text-xs sm:text-sm font-medium tracking-widest text-azure uppercase mt-4">
-                built by a jee aspirant for jee aspirants.
+              The Complete Study Planner & Prep Tracker for JEE & NEET
+              <span className="block text-xs sm:text-sm font-semibold tracking-widest text-azure uppercase mt-4">
+                Syllabus Planner · Time Tracker · Mock Score Tracker · 100% Ad-Free
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-text font-normal leading-relaxed max-w-2xl mb-10">
-              Built for the grind. Track your syllabus down to the last subtopic, log every study hour, and analyse your progress — offline-first, always instant.
+            <p className="text-lg md:text-xl text-muted-text font-normal leading-relaxed max-w-3xl mb-8">
+              Built for serious aspirants by an IIT JEE student. Plan your syllabus down to the exact subtopic, log every focused hour with a distraction-free time tracker, and record mock test scores — completely ad-free, offline-first, and always instant.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -116,7 +118,7 @@ export default function LandingPageClient() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-8 h-12 rounded bg-foreground text-background font-semibold text-base tracking-tight hover:opacity-90 transition-all cursor-pointer"
               >
-                <span>Open Tracker</span>
+                <span>Open Tracker (Free)</span>
                 <Icons.ExternalLink />
               </a>
               <a
@@ -130,6 +132,14 @@ export default function LandingPageClient() {
                 <span>View on GitHub</span>
               </a>
             </div>
+
+            {/* Core Feature Value Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8 text-xs text-muted-text">
+              <span className="flex items-center gap-1.5"><Icons.Check /><span>Syllabus Planner for JEE & NEET</span></span>
+              <span className="flex items-center gap-1.5"><Icons.Check /><span>Deep Work Time Tracker</span></span>
+              <span className="flex items-center gap-1.5"><Icons.Check /><span>Mock Score & Accuracy Tracker</span></span>
+              <span className="flex items-center gap-1.5"><Icons.Check /><span>100% Completely Ad-Free</span></span>
+            </div>
           </section>
         </div>
       </div>
@@ -137,10 +147,10 @@ export default function LandingPageClient() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 flex flex-col gap-24">
         <section id="dashboard-preview" className="flex flex-col gap-8 scroll-mt-24">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Live Workspace Showcase</div>
-            <h2 className="font-display text-3xl font-bold tracking-tight">All the features you need.</h2>
+            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Core JEE & NEET Prep Tools</div>
+            <h2 className="font-display text-3xl font-bold tracking-tight">One Command Centre. Every Tracker You Need.</h2>
             <p className="text-base text-muted-text">
-              Every stat available at your fingertips.
+              A granular syllabus planner, precision study time tracker, and mock score ledger — designed without ads, paywalls, or subscriptions.
             </p>
           </div>
           <BentoGrid />
@@ -148,10 +158,10 @@ export default function LandingPageClient() {
 
         <section id="community" className="flex flex-col gap-8 scroll-mt-24">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Friends Network</div>
+            <div className="text-sm font-semibold text-azure tracking-widest uppercase">Peer Accountability Network</div>
             <h2 className="font-display text-3xl font-bold tracking-tight">Study Better, Together</h2>
             <p className="text-base text-muted-text">
-              Synchronize logs, compare metrics, and stay accountable.
+              Sync study hours, compare prep velocity with fellow JEE & NEET students, and stay disciplined without social media distraction.
             </p>
           </div>
 
@@ -209,48 +219,180 @@ export default function LandingPageClient() {
           </div>
         </section>
 
+        {/* Pricing Section (100% Free Forever & Completely Ad-Free) */}
+        <PricingSection />
+
+        {/* Detailed FAQ Section */}
+        <FaqSection />
+
         <section className="rounded-2xl border border-subtle-border bg-gradient-to-r from-foreground/[0.04] via-foreground/[0.02] to-foreground/[0.04] px-6 py-8 md:px-10 md:py-10">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div className="max-w-2xl">
-              <div className="text-sm font-semibold text-azure tracking-widest uppercase">Ready to track</div>
+              <div className="text-sm font-semibold text-azure tracking-widest uppercase">Start Your Prep Today</div>
               <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight mt-2">
-                Open the tracker when you&apos;re ready to turn the grind into data.
+                Turn your daily study hours into top percentile consistency.
               </h2>
+              <p className="text-sm text-muted-text mt-1">
+                Open the completely ad-free study planner, syllabus tracker, and mock score tracker. Built by students who know the grind.
+              </p>
             </div>
             <a
               href={TRACKER_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 h-12 rounded bg-foreground text-background font-semibold text-base tracking-tight hover:opacity-90 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-6 h-12 rounded bg-foreground text-background font-semibold text-base tracking-tight hover:opacity-90 transition-all cursor-pointer"
             >
-              <span>Open Tracker</span>
+              <span>Open Tracker (Free)</span>
               <Icons.ExternalLink />
             </a>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-footer-border bg-background py-12 mt-24">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt="OJEE-Tracker logo"
-              width={24}
-              height={24}
-              className="h-6 w-6 shrink-0 object-contain"
-            />
-            <span className="font-display font-semibold text-sm tracking-tight">OJEE-Tracker</span>
+      <footer className="border-t border-footer-border bg-background py-16 mt-24">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col gap-12">
+          {/* Main Footer Links Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {/* Col 1: Brand & Mission */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/logo.png"
+                  alt="OJEE-Tracker logo"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 shrink-0 object-contain"
+                />
+                <span className="font-display font-bold text-base tracking-tight">OJEE-Tracker</span>
+              </div>
+              <p className="text-xs text-muted-text leading-relaxed">
+                The offline-first study planner, syllabus tracker, time tracker, and mock score tracker for JEE & NEET students. 100% free and completely ad-free.
+              </p>
+            </div>
+
+            {/* Col 2: Features & Tools */}
+            <div className="flex flex-col gap-3">
+              <span className="font-display font-semibold text-xs tracking-wider uppercase text-foreground">
+                Features & Tools
+              </span>
+              <ul className="flex flex-col gap-2 text-xs text-muted-text">
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    Subtopic Syllabus Tracker
+                  </a>
+                </li>
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    Pomodoro & Study Stopwatch
+                  </a>
+                </li>
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    Mock Test Score Ledger
+                  </a>
+                </li>
+                <li>
+                  <a href="#community" className="hover:text-foreground transition-colors">
+                    Friends Study Network
+                  </a>
+                </li>
+                <li>
+                  <a href={TRACKER_URL} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors inline-flex items-center">
+                    Web & Mobile PWA App
+                    <Icons.ExternalLink />
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 3: Exams & Syllabus */}
+            <div className="flex flex-col gap-3">
+              <span className="font-display font-semibold text-xs tracking-wider uppercase text-foreground">
+                Exams Supported
+              </span>
+              <ul className="flex flex-col gap-2 text-xs text-muted-text">
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    IIT JEE Main 2026/2027
+                  </a>
+                </li>
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    IIT JEE Advanced Syllabus
+                  </a>
+                </li>
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    NEET UG Physics, Chemistry, Biology
+                  </a>
+                </li>
+                <li>
+                  <a href="#dashboard-preview" className="hover:text-foreground transition-colors">
+                    Odisha JEE (OJEE) Engineering
+                  </a>
+                </li>
+                <li>
+                  <a href="#pricing" className="hover:text-foreground transition-colors">
+                    100% Free Study Planner
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 4: Community & Docs */}
+            <div className="flex flex-col gap-3">
+              <span className="font-display font-semibold text-xs tracking-wider uppercase text-foreground">
+                Community & Resources
+              </span>
+              <ul className="flex flex-col gap-2 text-xs text-muted-text">
+                <li>
+                  <a href="#faq" className="hover:text-foreground transition-colors">
+                    Frequently Asked Questions
+                  </a>
+                </li>
+                <li>
+                  <a href="#pricing" className="hover:text-foreground transition-colors">
+                    Pricing & Free Tiers
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/Namankatiyar/ojeet-tracker" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors inline-flex items-center">
+                    GitHub Repository
+                    <Icons.ExternalLink />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://discord.gg/6dKrbVQU8W" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors inline-flex items-center">
+                    Discord Study Server
+                    <Icons.ExternalLink />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/Namankatiyar/ojeet-tracker/issues" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                    Report Bug / Request Feature
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <p className="text-xs text-muted-text-strong text-center md:text-left">
-            &copy; 2026 OJEE-Tracker. Open source under the GNU GPLv3 License.
-          </p>
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-subtle-border flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-text-strong text-center md:text-left">
+              &copy; 2026 OJEE-Tracker. Built with precision for JEE & NEET aspirants. Open source under GNU GPLv3.
+            </p>
 
-          <div className="flex items-center gap-4 text-xs text-muted-text">
-            <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">License</a>
-            <a href="https://tracker.ojeet.tech/terms-of-service" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="https://tracker.ojeet.tech/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Privacy Policy</a>
+            <div className="flex items-center gap-6 text-xs text-muted-text">
+              <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                GPL-3.0 License
+              </a>
+              <a href="https://tracker.ojeet.tech/terms-of-service" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                Terms of Service
+              </a>
+              <a href="https://tracker.ojeet.tech/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                Privacy Policy
+              </a>
+            </div>
           </div>
         </div>
       </footer>

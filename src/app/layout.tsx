@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -54,18 +55,28 @@ export default function RootLayout({
           <header className="sticky top-0 z-50 w-full border-b border-subtle-border bg-header-bg backdrop-blur-sm">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
               <div className="flex items-center gap-3">
-                <Image
-                  src="/logo.png"
-                  alt="OJEE-Tracker logo"
-                  width={32}
-                  height={32}
-                  priority
-                  className="h-8 w-8 shrink-0 object-contain"
-                />
-                <span className="font-display text-lg font-semibold tracking-tight">
-                  OJEE-Tracker
-                </span>
+                <a href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                  <Image
+                    src="/logo.png"
+                    alt="OJEE-Tracker logo"
+                    width={32}
+                    height={32}
+                    priority
+                    className="h-8 w-8 shrink-0 object-contain"
+                  />
+                  <span className="font-display text-lg font-semibold tracking-tight">
+                    OJEE-Tracker
+                  </span>
+                </a>
               </div>
+
+              {/* Navigation Links for SEO & Quick Section Jumps */}
+              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-text" aria-label="Main Navigation">
+                <a href="#dashboard-preview" className="hover:text-foreground transition-colors">Features</a>
+                <a href="#community" className="hover:text-foreground transition-colors">Community</a>
+                <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+                <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+              </nav>
 
               <div className="flex items-center gap-2">
                 <ThemeToggle />

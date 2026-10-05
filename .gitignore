@@ -21,6 +21,8 @@
 /build
 InteractiveGrid.tsx
 *.md
+!public/*.md
+!README.md
 # misc
 .DS_Store
 *.pem

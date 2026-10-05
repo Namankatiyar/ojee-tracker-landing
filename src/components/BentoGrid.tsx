@@ -58,14 +58,20 @@ function BentoCard({
   className,
   index,
   reduceMotion,
+  featureId,
+  ariaLabelledBy,
 }: {
   children: React.ReactNode;
   className: string;
   index: number;
   reduceMotion: boolean;
+  featureId?: string;
+  ariaLabelledBy?: string;
 }) {
   return (
-    <motion.div
+    <motion.article
+      id={featureId}
+      aria-labelledby={ariaLabelledBy}
       initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }}
       whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: true, amount: 0.35 }}
@@ -81,7 +87,7 @@ function BentoCard({
         transition={{ duration: 0.8, ease: easeOutExpo }}
       />
       {children}
-    </motion.div>
+    </motion.article>
   );
 }
 
@@ -329,6 +335,23 @@ export default function BentoGrid() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.15 }}
       >
+        {/* AI Agent Native Reading Manifest & Screen Reader Context Landmark */}
+        <div className="sr-only" data-agent-manifest="bento-features">
+          <h2>OJEE-Tracker Core Feature Matrix & Capabilities</h2>
+          <p>
+            OJEE-Tracker is an offline-first study command center designed for JEE Main, JEE Advanced, NEET, and OJEE aspirants.
+            Key capabilities included in this cockpit:
+            1. Granular Syllabus Matrix: Subtopic tracking with NCERT, PYQ, Coaching Module, and Mock Test verification milestones.
+            2. Study Clock Engine: Pomodoro (25min) and continuous stopwatch timers with subject tagging and offline persistence.
+            3. Frictionless Weekly Planner: Daily checklist for scheduling problem-solving targets.
+            4. Mock Test Scores Ledger: Exam tracking for test series out of 300 and 720 marks.
+            5. BLUE AI Planner: Diagnostic recommendations based on syllabus velocity and weak spots.
+            6. Study Progress Reports: Charted analytics of daily hours (62.4h/week) and subject distribution.
+            7. Friends Accountability Feed: Real-time peer study indicators.
+            All modules run offline-first using client-side storage with zero telemetry.
+          </p>
+        </div>
+
         <motion.div
           className="grid grid-cols-1 md:grid-cols-12 gap-[1px] bg-bento-gap-bg border border-subtle-border rounded-xl overflow-hidden"
           initial={reduceMotion ? false : "hidden"}
@@ -336,11 +359,27 @@ export default function BentoGrid() {
           viewport={{ once: true, amount: 0.2 }}
         >
         {/* Syllabus Tracker */}
-        <BentoCard index={0} reduceMotion={reduceMotion} className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid border border-subtle-border rounded-lg transition-colors duration-300">
+        <BentoCard
+          index={0}
+          reduceMotion={reduceMotion}
+          featureId="feature-syllabus-tracker"
+          ariaLabelledBy="feature-syllabus-title"
+          className="md:col-span-8 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-syllabus">
+            <h4>Feature: Granular Syllabus Matrix</h4>
+            <p>
+              Tracks syllabus completion at the subtopic level across Physics, Chemistry, and Mathematics for JEE Main, JEE Advanced, NEET, and OJEE.
+              Each subtopic includes 4 independent verification milestones: NCERT theory review, Previous Year Questions (PYQs), Coaching Module exercises, and Mock Tests.
+              Operates offline with zero network latency using client-side IndexedDB.
+            </p>
+          </div>
+
           <div className="flex justify-between items-center border-b border-subtle-border pb-3.5">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-muted-text-strong">Granular Syllabus Matrix</span>
-              <h3 className="text-xl font-bold tracking-tight mt-1 text-foreground">Syllabus Tracker</h3>
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted-text-strong">JEE & NEET Syllabus Planner</span>
+              <h3 id="feature-syllabus-title" className="text-xl font-bold tracking-tight mt-1 text-foreground">Subtopic Syllabus Planner</h3>
             </div>
           </div>
 
@@ -365,12 +404,14 @@ export default function BentoGrid() {
                     </div>
                     <span className="text-[10px] text-muted-text mt-0.5">{item.sub}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={`Milestones for ${item.topic}`}>
                     {syllabusNodes.map((node, nIdx) => (
                       <motion.button
                         key={nIdx}
                         type="button"
                         layout
+                        aria-pressed={item.done[nIdx]}
+                        aria-label={`Toggle ${node} milestone for ${item.topic} (${theme.label})`}
                         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
                         whileTap={{ scale: 0.92 }}
                         onClick={() => toggleSyllabusNode(idx, nIdx)}
@@ -380,7 +421,7 @@ export default function BentoGrid() {
                             ? { backgroundColor: theme.soft, borderColor: theme.color, color: theme.color }
                             : { borderColor: theme.border, color: "var(--muted-text-strong)" }
                         }
-                        className="px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider"
+                        className="px-2.5 py-1 text-[9px] font-semibold border transition-all rounded-full uppercase tracking-wider cursor-pointer"
                       >
                         <AnimatePresence initial={false} mode="popLayout">
                           {item.done[nIdx] && (
@@ -406,18 +447,38 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex justify-between items-center text-[10px] text-muted-text-strong pt-2 border-t border-subtle-border">
-            <span>Track daily syllabus milestones.</span>
-            <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1">
+            <span>Track daily JEE & NEET syllabus milestones down to subtopics.</span>
+            <motion.button
+              whileHover={{ x: 3 }}
+              whileTap={{ scale: 0.96 }}
+              aria-label="Add custom topic to syllabus tracker"
+              className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+            >
               + Add Custom Topic
             </motion.button>
           </div>
         </BentoCard>
 
         {/* Study Clock Engine */}
-        <BentoCard index={1} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
+        <BentoCard
+          index={1}
+          reduceMotion={reduceMotion}
+          featureId="feature-study-clock"
+          ariaLabelledBy="feature-clock-title"
+          className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-clock">
+            <h4>Feature: Study Clock Engine</h4>
+            <p>
+              Integrated focus timer supporting Pomodoro technique (25-minute study intervals with automated 5-minute recovery intervals) and deep-work stopwatch.
+              Logs daily study sessions locally and updates active status in the Friends Network.
+            </p>
+          </div>
+
           <div className="flex justify-between items-start">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Study Clock Engine</span>
-            <span className="flex h-2 w-2 relative">
+            <span id="feature-clock-title" className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">JEE & NEET Time Tracker</span>
+            <span className="flex h-2 w-2 relative" aria-label={isClockRunning ? "Timer active" : "Timer paused"}>
               <motion.span
                 className="absolute inline-flex h-full w-full rounded-full bg-azure-dynamic"
                 animate={isClockRunning && !reduceMotion ? { scale: [1, 2.4], opacity: [0.7, 0] } : { scale: 1, opacity: 0.25 }}
@@ -428,10 +489,13 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex flex-col items-center py-2">
-            <div className="flex rounded bg-foreground/5 p-0.5 text-[10px] font-semibold border border-subtle-border mb-4 z-10">
+            <div role="tablist" aria-label="Timer Mode Selection" className="flex rounded bg-foreground/5 p-0.5 text-[10px] font-semibold border border-subtle-border mb-4 z-10">
               {(["pomo", "stopwatch", "custom"] as const).map((mode) => (
                 <motion.button
                   key={mode}
+                  role="tab"
+                  aria-selected={clockMode === mode}
+                  aria-label={`Switch timer mode to ${mode === "pomo" ? "Pomodoro 25 minute cycle" : mode === "stopwatch" ? "continuous stopwatch" : "custom 45 minute timer"}`}
                   onClick={() => {
                     setClockMode(mode);
                     setClockTime(mode === "pomo" ? "25:00" : mode === "stopwatch" ? "00:00:00" : "45:00");
@@ -449,6 +513,9 @@ export default function BentoGrid() {
 
             <motion.div
               key={clockTime}
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={`Current timer display: ${clockTime}`}
               initial={reduceMotion ? { opacity: 0.7 } : { opacity: 0, y: -8, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               className="text-4xl font-mono font-bold tracking-tight text-foreground mb-2"
@@ -457,14 +524,16 @@ export default function BentoGrid() {
             </motion.div>
             <motion.span
               animate={{ color: isClockRunning ? "rgba(0,127,255,0.9)" : "var(--muted-text-strong)" }}
-              className="text-[10px] uppercase tracking-widest"
+              className="text-[10px] uppercase tracking-widest font-medium"
             >
-              {isClockRunning ? "Focus Session Active" : "Paused"}
+              {isClockRunning ? "Deep Work Active · 100% Ad-Free" : "Focus Timer Paused"}
             </motion.span>
           </div>
 
           <div className="flex gap-2 w-full z-10">
             <motion.button
+              type="button"
+              aria-label={isClockRunning ? "Pause study focus timer" : "Start study focus timer"}
               onClick={() => setIsClockRunning(!isClockRunning)}
               whileHover={reduceMotion ? undefined : { scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
@@ -473,6 +542,8 @@ export default function BentoGrid() {
               {isClockRunning ? "Pause" : "Start"}
             </motion.button>
             <motion.button
+              type="button"
+              aria-label="Reset study timer"
               onClick={() => {
                 setIsClockRunning(false);
                 setClockTime(clockMode === "pomo" ? "25:00" : clockMode === "stopwatch" ? "00:00:00" : "45:00");
@@ -487,17 +558,32 @@ export default function BentoGrid() {
         </BentoCard>
 
         {/* Frictionless Weekly Planner */}
-        <BentoCard index={2} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Frictionless Planner</span>
-            <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Weekly Study Tasks</h3>
+        <BentoCard
+          index={2}
+          reduceMotion={reduceMotion}
+          featureId="feature-weekly-planner"
+          ariaLabelledBy="feature-planner-title"
+          className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-planner">
+            <h4>Feature: Frictionless Weekly Planner</h4>
+            <p>
+              Subject-tagged task checklist for scheduling daily revision, NCERT reading goals, and question-solving targets with instant offline persistence.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-2 my-3 max-h-[110px] overflow-y-auto pr-1">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Daily Prep Planner</span>
+            <h3 id="feature-planner-title" className="text-base font-bold tracking-tight mt-0.5 text-foreground">Weekly Study Tasks (JEE & NEET)</h3>
+          </div>
+
+          <div className="flex flex-col gap-2 my-3 max-h-[110px] overflow-y-auto pr-1" role="list" aria-label="Study Task List">
             <AnimatePresence initial={false}>
               {plannerTasks.map((t) => (
               <motion.div
                 key={t.id}
+                role="listitem"
                 layout
                 initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -12, scale: 0.98 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -506,11 +592,13 @@ export default function BentoGrid() {
               >
                 <input
                   type="checkbox"
+                  id={`task-${t.id}`}
+                  aria-label={`Mark task ${t.text} as ${t.done ? "incomplete" : "complete"}`}
                   checked={t.done}
                   onChange={() => setPlannerTasks(prev => prev.map(item => item.id === t.id ? { ...item, done: !item.done } : item))}
-                  className="rounded border-subtle-border bg-background text-azure-dynamic focus:ring-0 w-3.5 h-3.5"
+                  className="rounded border-subtle-border bg-background text-azure-dynamic focus:ring-0 w-3.5 h-3.5 cursor-pointer"
                 />
-                <div className="flex min-w-0 items-center gap-2">
+                <label htmlFor={`task-${t.id}`} className="flex min-w-0 items-center gap-2 cursor-pointer">
                   {t.subject && (
                     <span
                       className="shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
@@ -529,7 +617,7 @@ export default function BentoGrid() {
                   >
                     {t.text}
                   </motion.span>
-                </div>
+                </label>
               </motion.div>
               ))}
             </AnimatePresence>
@@ -544,29 +632,54 @@ export default function BentoGrid() {
             }}
             className="flex gap-2 border border-subtle-border rounded px-2.5 py-1.5 bg-input-bg z-10"
           >
+            <label htmlFor="planner-task-input" className="sr-only">Add task to weekly planner</label>
             <input
+              id="planner-task-input"
               type="text"
               value={plannerInput}
               onChange={(e) => setPlannerInput(e.target.value)}
               placeholder="> Add task to weekly planner..."
               className="bg-transparent border-0 outline-none p-0 text-xs text-foreground placeholder-muted-text-strong flex-1 ring-0 focus:ring-0"
             />
-            <motion.button type="submit" whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }} className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-foreground">Add</motion.button>
+            <motion.button
+              type="submit"
+              aria-label="Add task to weekly study planner"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              className="text-[10px] font-bold text-azure-dynamic uppercase tracking-wider hover:text-foreground cursor-pointer"
+            >
+              Add
+            </motion.button>
           </form>
         </BentoCard>
 
         {/* Mock Score Log */}
-        <BentoCard index={3} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Mock Test Scores</span>
-            <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Scores Ledger</h3>
+        <BentoCard
+          index={3}
+          reduceMotion={reduceMotion}
+          featureId="feature-mock-ledger"
+          ariaLabelledBy="feature-ledger-title"
+          className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-mock-ledger">
+            <h4>Feature: Mock Test Scores Ledger</h4>
+            <p>
+              Tracks full-length and chapter mock test scores for JEE Main, JEE Advanced, and NEET. Records test title, test date, and total score out of maximum marks (300 or 720) to compute accuracy trends.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-2 my-2">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">JEE & NEET Mock Score Tracker</span>
+            <h3 id="feature-ledger-title" className="text-base font-bold tracking-tight mt-0.5 text-foreground">Mock Scores Ledger (300 / 720 Marks)</h3>
+          </div>
+
+          <div className="flex flex-col gap-2 my-2" role="list" aria-label="Mock Test Scores List">
             <AnimatePresence initial={false}>
               {mockLedger.slice(-2).map((item) => (
               <motion.div
                 key={`${item.name}-${item.date}-${item.score}`}
+                role="listitem"
                 layout
                 initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -619,14 +732,18 @@ export default function BentoGrid() {
             className="flex flex-col gap-1.5 z-10"
           >
             <div className="flex gap-1.5">
+              <label htmlFor="mock-test-name-input" className="sr-only">Mock Test Name</label>
               <input
+                id="mock-test-name-input"
                 type="text"
                 value={mockInputName}
                 onChange={(e) => setMockInputName(e.target.value)}
                 placeholder="Test Name"
                 className="bg-foreground/5 border border-subtle-border rounded px-2 py-1 text-[10px] text-foreground placeholder-muted-text-strong flex-1 outline-none"
               />
+              <label htmlFor="mock-test-score-input" className="sr-only">Mock Test Score</label>
               <input
+                id="mock-test-score-input"
                 type="text"
                 value={mockInputScore}
                 onChange={(e) => setMockInputScore(e.target.value)}
@@ -634,27 +751,48 @@ export default function BentoGrid() {
                 className="bg-foreground/5 border border-subtle-border rounded px-2 py-1 text-[10px] text-foreground placeholder-muted-text-strong w-16 outline-none"
               />
             </div>
-            <motion.button type="submit" whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }} whileTap={{ scale: 0.96 }} className="w-full h-7 rounded border border-subtle-border hover:border-card-border text-[10px] font-semibold text-foreground tracking-wider uppercase transition-colors">
+            <motion.button
+              type="submit"
+              aria-label="Log mock exam score into ledger"
+              whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full h-7 rounded border border-subtle-border hover:border-card-border text-[10px] font-semibold text-foreground tracking-wider uppercase transition-colors cursor-pointer"
+            >
               Log Mock Score
             </motion.button>
           </form>
         </BentoCard>
 
         {/* AI IITian Planner Agent */}
-        <BentoCard index={4} reduceMotion={reduceMotion} className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
+        <BentoCard
+          index={4}
+          reduceMotion={reduceMotion}
+          featureId="feature-ai-agent"
+          ariaLabelledBy="feature-ai-title"
+          className="md:col-span-4 p-5 relative flex flex-col justify-between min-h-[260px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-ai-agent">
+            <h4>Feature: BLUE AI Study Planner</h4>
+            <p>
+              Diagnostic study agent that analyzes student performance patterns, test score gaps, and syllabus velocity to formulate prioritized study recommendations.
+            </p>
+          </div>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <motion.div
                 className="w-2 h-2 rounded-full bg-azure"
+                aria-hidden="true"
                 animate={reduceMotion ? undefined : { scale: [1, 1.7, 1], opacity: [1, 0.55, 1] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
               />
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">BLUE AI</span>
+              <span id="feature-ai-title" className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">BLUE AI Planner</span>
             </div>
             <span className="text-[9px] text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono bg-emerald-500/10">API KEY ACTIVE</span>
           </div>
 
-          <div className="flex flex-col gap-2 my-2 max-h-[110px] overflow-y-auto text-sm pr-1">
+          <div className="flex flex-col gap-2 my-2 max-h-[110px] overflow-y-auto text-sm pr-1" role="log" aria-label="AI Planner Chat Log">
             <AnimatePresence initial={false}>
               {aiChat.slice(-3).map((msg, idx) => (
               <motion.div
@@ -683,9 +821,11 @@ export default function BentoGrid() {
               ]);
               setAiInput("");
             }}
-            className="flex gap-2 border border-subtle-border rounded px-2 py-1.5 bg-input-bg z-10"
+            className="flex gap-2 border border-subtle-border rounded px-2.5 py-1.5 bg-input-bg z-10"
           >
+            <label htmlFor="ai-chat-input" className="sr-only">Ask AI study planner agent</label>
             <input
+              id="ai-chat-input"
               type="text"
               value={aiInput}
               onChange={(e) => setAiInput(e.target.value)}
@@ -696,16 +836,46 @@ export default function BentoGrid() {
         </BentoCard>
 
         {/* Daily Reports Page Widget */}
-        <BentoCard index={5} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-card-solid border border-subtle-border rounded-lg">
+        <BentoCard
+          index={5}
+          reduceMotion={reduceMotion}
+          featureId="feature-progress-reports"
+          ariaLabelledBy="feature-reports-title"
+          className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[240px] bg-card-solid border border-subtle-border rounded-lg"
+        >
+          {/* Machine Summary for AI Agents & Screen Readers */}
+          <div className="sr-only" data-agent-reading="feature-reports-data">
+            <h4>Feature: Study Progress Reports Data</h4>
+            <table>
+              <caption>Weekly Study Hours by Day and Subject</caption>
+              <thead>
+                <tr><th scope="col">Day</th><th scope="col">Total Hours</th><th scope="col">Physics</th><th scope="col">Chemistry</th><th scope="col">Mathematics</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Monday</td><td>8.5h</td><td>3.5h</td><td>2.5h</td><td>2.5h</td></tr>
+                <tr><td>Tuesday</td><td>9.2h</td><td>4.0h</td><td>3.2h</td><td>2.0h</td></tr>
+                <tr><td>Wednesday</td><td>6.0h</td><td>2.5h</td><td>2.0h</td><td>1.5h</td></tr>
+                <tr><td>Thursday</td><td>7.8h</td><td>3.0h</td><td>2.8h</td><td>2.0h</td></tr>
+                <tr><td>Friday</td><td>10.5h</td><td>4.5h</td><td>3.5h</td><td>2.5h</td></tr>
+                <tr><td>Saturday</td><td>12.0h</td><td>5.0h</td><td>4.0h</td><td>3.0h</td></tr>
+                <tr><td>Sunday</td><td>8.4h</td><td>3.4h</td><td>3.0h</td><td>2.0h</td></tr>
+              </tbody>
+            </table>
+            <p>Weekly Total: 62.4 Hours (+12% improvement vs previous week). Subject Distribution: Physics 28.4h, Chemistry 20.0h, Mathematics 14.0h.</p>
+          </div>
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-subtle-border pb-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-text-strong">Study Progress Reports</span>
-              <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Daily Reports Page</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-text-strong">Time Tracker & Prep Analytics</span>
+              <h3 id="feature-reports-title" className="text-base font-bold tracking-tight mt-0.5 text-foreground">Daily Study Hours & Reports</h3>
             </div>
-            <div className="flex items-center gap-1 bg-foreground/5 border border-subtle-border p-0.5 rounded text-[10px]">
+            <div role="tablist" aria-label="Report Metric Switcher" className="flex items-center gap-1 bg-foreground/5 border border-subtle-border p-0.5 rounded text-[10px]">
               {(["hours", "weekly"] as const).map((metric) => (
                 <motion.button
                   key={metric}
+                  role="tab"
+                  aria-selected={reportMetric === metric}
+                  aria-label={`View ${metric === "hours" ? "daily study hours trend" : "weekly subject distribution"} chart`}
                   onClick={() => setReportMetric(metric)}
                   whileTap={{ scale: 0.94 }}
                   className={`relative px-2 py-0.5 rounded capitalize font-semibold cursor-pointer ${reportMetric === metric ? "text-foreground" : "text-muted-text hover:text-foreground"}`}
@@ -723,7 +893,12 @@ export default function BentoGrid() {
             transition={{ duration: reduceMotion ? 0.12 : 0.28, ease: easeOutExpo }}
             className="relative h-32 my-3 w-full"
           >
-            <canvas ref={chartRef} className="w-full h-full" />
+            <canvas
+              ref={chartRef}
+              role="img"
+              aria-label="Study hours visualization chart displaying daily hours between 6.0 and 12.0 hours across Physics, Chemistry, and Mathematics"
+              className="w-full h-full"
+            />
           </motion.div>
 
           <div className="flex justify-between items-center text-[10px] text-muted-text-strong pt-2 border-t border-subtle-border">
@@ -744,23 +919,42 @@ export default function BentoGrid() {
                 </>
               )}
             </span>
-            <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.96 }} className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer">
+            <motion.button
+              whileHover={{ x: 3 }}
+              whileTap={{ scale: 0.96 }}
+              aria-label="View full study progress analytics and reports"
+              className="text-azure hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+            >
               View Full Reports →
             </motion.button>
           </div>
         </BentoCard>
 
         {/* Friends System Widget */}
-        <BentoCard index={6} reduceMotion={reduceMotion} className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300">
+        <BentoCard
+          index={6}
+          reduceMotion={reduceMotion}
+          featureId="feature-friends-feed"
+          ariaLabelledBy="feature-friends-title"
+          className="md:col-span-6 p-5 relative flex flex-col justify-between min-h-[220px] bg-card-solid hover:bg-card-hover border border-subtle-border rounded-lg transition-colors duration-300"
+        >
+          {/* Machine Summary for AI Agents */}
+          <div className="sr-only" data-agent-reading="feature-friends-feed">
+            <h4>Feature: Accountability Friends Network</h4>
+            <p>
+              Peer accountability network displaying real-time study activity and daily hours among study partners (e.g. solving Matrices, revising formulas) to foster focus without social media distraction.
+            </p>
+          </div>
+
           <div className="flex justify-between items-start">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">Accountability Network</span>
-              <h3 className="text-base font-bold tracking-tight mt-0.5 text-foreground">Friends Progress Feed</h3>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-text-strong">JEE & NEET Peer Network</span>
+              <h3 id="feature-friends-title" className="text-base font-bold tracking-tight mt-0.5 text-foreground">Friends Prep & Hours Feed</h3>
             </div>
             <span className="text-[10px] text-muted-text-strong">3 Friends Online</span>
           </div>
 
-          <div className="flex flex-col gap-2 my-2">
+          <div className="flex flex-col gap-2 my-2" role="feed" aria-label="Friends study activity feed">
             {[
               { name: "Aman Rathore (AR)", status: "Active: 7.8h · Matrices", online: true },
               { name: "Sneha Mahapatra (SM)", status: "Active: 5.2h · GOC", online: true },
@@ -778,6 +972,7 @@ export default function BentoGrid() {
                 <div className="flex items-center gap-2">
                   <motion.span
                     className={`w-1.5 h-1.5 rounded-full ${item.online ? "bg-emerald-500" : "bg-foreground/20"}`}
+                    aria-label={item.online ? "Online studying" : "Offline"}
                     animate={item.online && !reduceMotion ? { scale: [1, 1.7, 1] } : undefined}
                     transition={{ duration: 1.5, repeat: Infinity, delay: idx * 0.25 }}
                   />
@@ -789,10 +984,22 @@ export default function BentoGrid() {
           </div>
 
           <div className="flex gap-2 w-full z-10">
-            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }} whileTap={{ scale: 0.96 }} className="flex-1 h-8 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer">
+            <motion.button
+              type="button"
+              aria-label="Challenge friends to a study sprint"
+              whileHover={reduceMotion ? undefined : { scale: 1.02, borderColor: "var(--subtle-border)" }}
+              whileTap={{ scale: 0.96 }}
+              className="flex-1 h-8 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer"
+            >
               Challenge Friends
             </motion.button>
-            <motion.button whileHover={reduceMotion ? undefined : { scale: 1.04, borderColor: "rgba(0,127,255,0.45)" }} whileTap={{ scale: 0.96 }} className="h-8 px-3 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer">
+            <motion.button
+              type="button"
+              aria-label="Connect with new study peers"
+              whileHover={reduceMotion ? undefined : { scale: 1.04, borderColor: "rgba(0,127,255,0.45)" }}
+              whileTap={{ scale: 0.96 }}
+              className="h-8 px-3 rounded border border-subtle-border hover:bg-foreground/5 text-[10px] font-semibold text-foreground/80 transition-all cursor-pointer"
+            >
               + Connect
             </motion.button>
           </div>
