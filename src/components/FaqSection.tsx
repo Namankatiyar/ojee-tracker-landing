@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useState, useId } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { FAQ_ITEMS, type FaqItem } from "@/data/faqData";
 
 export default function FaqSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [openId, setOpenId] = useState<string | null>("free-and-ad-free");
   const searchInputId = useId();
+  const shouldReduceMotion = useReducedMotion();
 
   const categories = [
     "All",
@@ -25,6 +28,17 @@ export default function FaqSection() {
       item.answer.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const toggleItem = (id: string) => {
+    setOpenId((prev) => (prev === id ? null : id));
+  };
+
+  const transitionSettings = shouldReduceMotion
+    ? { duration: 0 }
+    : {
+        height: { duration: 0.28, ease: [0.04, 0.62, 0.23, 0.98] },
+        opacity: { duration: 0.2, delay: 0.04 }
+      };
 
   return (
     <section id="faq" className="flex flex-col gap-8 scroll-mt-24">
@@ -77,14 +91,22 @@ export default function FaqSection() {
           return (
             <button
               key={cat}
+              type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-all cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-colors cursor-pointer ${
                 isActive
-                  ? "bg-azure text-white shadow-sm"
+                  ? "text-white"
                   : "bg-foreground/5 text-muted-text hover:text-foreground hover:bg-foreground/10 border border-subtle-border"
               }`}
             >
-              {cat}
+              {isActive && (
+                <motion.span
+                  layoutId="faq-active-category"
+                  className="absolute inset-0 rounded-full bg-azure shadow-sm"
+                  transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{cat}</span>
             </button>
           );
         })}
@@ -93,50 +115,120 @@ export default function FaqSection() {
       {/* FAQ Accordion List */}
       <div className="flex flex-col gap-3">
         {filteredFaqs.length === 0 ? (
-          <div className="p-8 text-center rounded-xl border border-subtle-border bg-card-bg text-muted-text text-sm">
-            No questions found matching &quot;{searchQuery}&quot;. Have a question? Reach out on our{" "}
-            <a
-              href="https://discord.gg/6dKrbVQU8W"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-azure underline hover:text-azure/80"
-            >
-              Discord community
-            </a>
-            .
+          <div className="p-8 text-center rounded-xl border border-subtle-border bg-card-bg text-muted-text text-sm flex flex-col items-center gap-3">
+            <p>
+              No questions found matching &quot;{searchQuery}&quot;. Have a question? Reach out on our{" "}
+              <a
+                href="https://discord.gg/6dKrbVQU8W"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-azure underline hover:text-azure/80"
+              >
+                Discord community
+              </a>
+              .
+            </p>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-xs font-semibold text-azure hover:underline cursor-pointer"
+              >
+                Clear search filter
+              </button>
+            )}
           </div>
         ) : (
-          filteredFaqs.map((faq) => (
-            <details
-              key={faq.id}
-              className="group rounded-xl border border-subtle-border bg-card-bg/60 backdrop-blur-md transition-all duration-200 open:border-azure/40 open:bg-card-bg"
-            >
-              <summary className="flex items-center justify-between p-5 cursor-pointer list-none select-none text-left">
-                <span className="font-display text-base font-semibold tracking-tight text-foreground group-hover:text-azure transition-colors pr-4">
-                  {faq.question}
-                </span>
-                <span className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-foreground/5 border border-subtle-border text-muted-text group-hover:text-foreground transition-all group-open:rotate-180 group-open:bg-azure group-open:text-white group-open:border-azure">
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
+          filteredFaqs.map((faq) => {
+            const isOpen = openId === faq.id;
+            return (
+              <div
+                key={faq.id}
+                className={`rounded-xl border transition-colors duration-200 overflow-hidden ${
+                  isOpen
+                    ? "border-azure/40 bg-card-bg shadow-sm shadow-azure/5"
+                    : "border-subtle-border bg-card-bg/60 hover:border-subtle-border-hover backdrop-blur-md"
+                }`}
+              >
+                <h3>
+                  <button
+                    type="button"
+                    id={`faq-btn-${faq.id}`}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${faq.id}`}
+                    onClick={() => toggleItem(faq.id)}
+                    className="group w-full flex items-center justify-between p-5 cursor-pointer select-none text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-azure/50 transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </span>
-              </summary>
-              <div className="px-5 pb-5 pt-1 text-sm text-muted-text leading-relaxed border-t border-subtle-border/50 mt-1">
-                <p>{faq.answer}</p>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 pr-4">
+                      <span
+                        className={`font-display text-base font-semibold tracking-tight transition-colors ${
+                          isOpen ? "text-azure" : "text-foreground group-hover:text-azure"
+                        }`}
+                      >
+                        {faq.question}
+                      </span>
+                    </div>
+
+                    <motion.span
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.25, ease: "easeInOut" }}
+                      className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                        isOpen
+                          ? "bg-azure text-white"
+                          : "bg-foreground/5 border border-subtle-border text-muted-text group-hover:text-foreground"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </motion.span>
+                  </button>
+                </h3>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={`faq-answer-${faq.id}`}
+                      role="region"
+                      aria-labelledby={`faq-btn-${faq.id}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{
+                        height: "auto",
+                        opacity: 1,
+                        transition: transitionSettings
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                        transition: shouldReduceMotion
+                          ? { duration: 0 }
+                          : {
+                              height: { duration: 0.22, ease: [0.04, 0.62, 0.23, 0.98] },
+                              opacity: { duration: 0.15 }
+                            }
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 pt-1 text-sm text-muted-text leading-relaxed border-t border-subtle-border/50 mt-1">
+                        <p>{faq.answer}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </details>
-          ))
+            );
+          })
         )}
       </div>
 
