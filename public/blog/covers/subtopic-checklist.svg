@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#05070f"/>
+      <stop offset="50%" stopColor="#090d1a"/>
+      <stop offset="100%" stopColor="#020307"/>
+    </linearGradient>
+    <linearGradient id="azureGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stopColor="#007fff" stopOpacity="0.8"/>
+      <stop offset="100%" stopColor="#00d2ff" stopOpacity="0.4"/>
+    </linearGradient>
+    <radialGradient id="spotlight" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0%" stopColor="#007fff" stopOpacity="0.18"/>
+      <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+    </radialGradient>
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="675" fill="url(#bgGrad)"/>
+  <rect width="1200" height="675" fill="url(#spotlight)"/>
+  <rect width="1200" height="675" fill="url(#gridPattern)"/>
+
+  <!-- Blueprint Lines & Crosshairs -->
+  <line x1="80" y1="120" x2="1120" y2="120" stroke="rgba(0,127,255,0.2)" strokeWidth="1" strokeDasharray="4 4"/>
+  <line x1="80" y1="580" x2="1120" y2="580" stroke="rgba(0,127,255,0.2)" strokeWidth="1" strokeDasharray="4 4"/>
+  <circle cx="80" cy="120" r="3" fill="#007fff"/>
+  <circle cx="1120" cy="120" r="3" fill="#007fff"/>
+  <circle cx="80" cy="580" r="3" fill="#007fff"/>
+  <circle cx="1120" cy="580" r="3" fill="#007fff"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(0,127,255,0.12)" stroke="rgba(0,127,255,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#007fff"/>
+  <text x="114" y="91" fill="#007fff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="2">SYLLABUS BLUEPRINT</text>
+
+  <!-- Title & Subtitle -->
+  <text x="80" y="190" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">The Subtopic Syllabus Matrix</text>
+  <text x="80" y="240" fill="rgba(255,255,255,0.6)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="400">4-Milestone Precision Verification for JEE &amp; NEET Top Percentiles</text>
+
+  <!-- Cockpit Matrix Cards -->
+  <!-- Row 1: Rotational Dynamics -->
+  <g transform="translate(80, 280)">
+    <rect width="1040" height="74" rx="10" fill="rgba(15,23,42,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+    <rect x="18" y="26" width="60" height="22" rx="4" fill="rgba(99,102,241,0.15)" stroke="rgba(99,102,241,0.4)" strokeWidth="1"/>
+    <text x="48" y="41" text-anchor="middle" fill="#818cf8" font-family="monospace" font-size="10" font-weight="700">PHYSICS</text>
+    <text x="95" y="38" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Rotational Dynamics</text>
+    <text x="95" y="55" fill="rgba(255,255,255,0.4)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11">Moment of Inertia, Pure Rolling &amp; Angular Momentum</text>
+
+    <!-- Milestone Pills -->
+    <g transform="translate(620, 22)">
+      <rect x="0" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="42" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ NCERT</text>
+      <rect x="95" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="137" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ PYQS</text>
+      <rect x="190" y="0" width="95" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="237" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ MODULES</text>
+      <rect x="295" y="0" width="95" height="30" rx="15" fill="rgba(0,127,255,0.15)" stroke="#007fff" strokeWidth="1"/>
+      <text x="342" y="19" text-anchor="middle" fill="#007fff" font-family="monospace" font-size="11" font-weight="700">✓ MOCKS</text>
+    </g>
+  </g>
+
+  <!-- Row 2: General Organic Chemistry -->
+  <g transform="translate(80, 370)">
+    <rect width="1040" height="74" rx="10" fill="rgba(15,23,42,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+    <rect x="18" y="26" width="75" height="22" rx="4" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.4)" strokeWidth="1"/>
+    <text x="55" y="41" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="10" font-weight="700">CHEMISTRY</text>
+    <text x="108" y="38" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Organic Chemistry (GOC)</text>
+    <text x="108" y="55" fill="rgba(255,255,255,0.4)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11">Inductive, Mesomeric, Hyperconjugation &amp; Carbocations</text>
+
+    <!-- Milestone Pills -->
+    <g transform="translate(620, 22)">
+      <rect x="0" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="42" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ NCERT</text>
+      <rect x="95" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="137" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ PYQS</text>
+      <rect x="190" y="0" width="95" height="30" rx="15" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+      <text x="237" y="19" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">MODULES</text>
+      <rect x="295" y="0" width="95" height="30" rx="15" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+      <text x="342" y="19" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">MOCKS</text>
+    </g>
+  </g>
+
+  <!-- Row 3: Matrices & Calculus -->
+  <g transform="translate(80, 460)">
+    <rect width="1040" height="74" rx="10" fill="rgba(15,23,42,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+    <rect x="18" y="26" width="60" height="22" rx="4" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.4)" strokeWidth="1"/>
+    <text x="48" y="41" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="10" font-weight="700">MATHS</text>
+    <text x="95" y="38" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Matrices &amp; Determinants</text>
+    <text x="95" y="55" fill="rgba(255,255,255,0.4)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11">Adjoint properties, Cramer's rule &amp; System of linear equations</text>
+
+    <!-- Milestone Pills -->
+    <g transform="translate(620, 22)">
+      <rect x="0" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="42" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ NCERT</text>
+      <rect x="95" y="0" width="85" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="137" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ PYQS</text>
+      <rect x="190" y="0" width="95" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="237" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ MODULES</text>
+      <rect x="295" y="0" width="95" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" strokeWidth="1"/>
+      <text x="342" y="19" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">✓ MOCKS</text>
+    </g>
+  </g>
+
+  <!-- Bottom Branding / Watermark -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // 100% FREE &amp; AD-FREE STUDY COMMAND CENTRE</text>
+    <text x="1040" y="0" text-anchor="end" fill="#007fff" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

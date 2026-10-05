@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgNotion" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#030712"/>
+      <stop offset="50%" stopColor="#0b1329"/>
+      <stop offset="100%" stopColor="#020308"/>
+    </linearGradient>
+    <pattern id="gridNotion" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bgNotion)"/>
+  <rect width="1200" height="675" fill="url(#gridNotion)"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(0,127,255,0.12)" stroke="rgba(0,127,255,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#007fff"/>
+  <text x="114" y="91" fill="#007fff" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="2">TOOL COMPARISON</text>
+
+  <!-- Title -->
+  <text x="80" y="180" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">Why Notion &amp; Excel Fail</text>
+  <text x="80" y="230" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="20" font-weight="400">The Productivity Trap vs Purpose-Built JEE &amp; NEET Study Cockpits</text>
+
+  <!-- Comparison Split Cards -->
+  <g transform="translate(80, 275)">
+    <!-- Left: The Clunky Notion/Excel Side -->
+    <rect width="500" height="270" rx="12" fill="rgba(30,15,15,0.6)" stroke="rgba(244,63,94,0.3)" strokeWidth="1"/>
+    <text x="30" y="38" fill="#f43f5e" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">NOTION &amp; SPREADSHEETS</text>
+    <g transform="translate(30, 65)">
+      <text x="0" y="20" fill="rgba(255,255,255,0.7)" font-family="-apple-system, sans-serif" font-size="13">✗ 10+ hours spent formatting aesthetic database views</text>
+      <text x="0" y="55" fill="rgba(255,255,255,0.7)" font-family="-apple-system, sans-serif" font-size="13">✗ Laggy mobile app startup when you need quick logging</text>
+      <text x="0" y="90" fill="rgba(255,255,255,0.7)" font-family="-apple-system, sans-serif" font-size="13">✗ Disconnected timers requiring manual stopwatch entry</text>
+      <text x="0" y="125" fill="rgba(255,255,255,0.7)" font-family="-apple-system, sans-serif" font-size="13">✗ No built-in JEE/NEET 300 &amp; 720 score analysis engines</text>
+      <text x="0" y="160" fill="#f43f5e" font-family="monospace" font-size="11" font-weight="700">RESULT: PRODUCTIVE PROCRASTINATION</text>
+    </g>
+
+    <!-- Right: OJEE-Tracker Side -->
+    <g transform="translate(540, 0)">
+      <rect width="500" height="270" rx="12" fill="rgba(10,25,45,0.8)" stroke="rgba(0,127,255,0.4)" strokeWidth="1.5"/>
+      <text x="30" y="38" fill="#00d2ff" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">OJEE-TRACKER COCKPIT</text>
+      <g transform="translate(30, 65)">
+        <text x="0" y="20" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13">✓ Zero setup: Pre-configured with official subtopics</text>
+        <text x="0" y="55" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13">✓ Offline-first PWA: Instant load in 0.2s via IndexedDB</text>
+        <text x="0" y="90" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13">✓ Integrated Study Stopwatch tagged by subject</text>
+        <text x="0" y="125" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13">✓ Mock score ledger with accuracy trajectory</text>
+        <text x="0" y="160" fill="#007fff" font-family="monospace" font-size="11" font-weight="700">RESULT: 100% FOCUS ON PROBLEM SOLVING</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Branding -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // 100% FREE FOREVER (GNU GPLV3)</text>
+    <text x="1040" y="0" text-anchor="end" fill="#007fff" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

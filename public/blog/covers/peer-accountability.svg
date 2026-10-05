@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgPeer" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#0c0414"/>
+      <stop offset="50%" stopColor="#1a0a2e"/>
+      <stop offset="100%" stopColor="#06020c"/>
+    </linearGradient>
+    <pattern id="gridPeer" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bgPeer)"/>
+  <rect width="1200" height="675" fill="url(#gridPeer)"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(236,72,153,0.12)" stroke="rgba(236,72,153,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#ec4899"/>
+  <text x="114" y="91" fill="#f472b6" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="2">PEER MOTIVATION</text>
+
+  <!-- Title -->
+  <text x="80" y="180" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">Virtual Study Groups &amp; Accountability</text>
+  <text x="80" y="230" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="20" font-weight="400">Staying Consistent with Silent Ambient Presence Instead of Chat Clutter</text>
+
+  <!-- Live Friends Feed Visual -->
+  <g transform="translate(80, 275)">
+    <!-- Main Feed Card -->
+    <rect width="640" height="270" rx="12" fill="rgba(24,10,38,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+    <text x="25" y="36" fill="#f472b6" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">LIVE FRIENDS PREP &amp; HOURS FEED</text>
+    <text x="615" y="36" text-anchor="end" fill="#10b981" font-family="monospace" font-size="11">● 4 PEERS LIVE STUDYING</text>
+
+    <!-- Peer Row 1 -->
+    <g transform="translate(25, 55)">
+      <rect width="590" height="46" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+      <circle cx="25" cy="23" r="14" fill="#007fff"/>
+      <text x="25" y="27" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="11" font-weight="700">AR</text>
+      <text x="50" y="27" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Aman Rathore</text>
+      <text x="180" y="27" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">Solving Matrices PYQs</text>
+      <text x="565" y="27" text-anchor="end" fill="#00d2ff" font-family="monospace" font-size="12" font-weight="700">7.8 hrs today</text>
+    </g>
+
+    <!-- Peer Row 2 -->
+    <g transform="translate(25, 110)">
+      <rect width="590" height="46" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+      <circle cx="25" cy="23" r="14" fill="#10b981"/>
+      <text x="25" y="27" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="11" font-weight="700">SM</text>
+      <text x="50" y="27" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Sneha Mahapatra</text>
+      <text x="180" y="27" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">NCERT Organic Chemistry GOC</text>
+      <text x="565" y="27" text-anchor="end" fill="#34d399" font-family="monospace" font-size="12" font-weight="700">6.4 hrs today</text>
+    </g>
+
+    <!-- Peer Row 3 -->
+    <g transform="translate(25, 165)">
+      <rect width="590" height="46" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+      <circle cx="25" cy="23" r="14" fill="#a855f7"/>
+      <text x="25" y="27" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="11" font-weight="700">PS</text>
+      <text x="50" y="27" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Priya Sharma</text>
+      <text x="180" y="27" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">Modern Physics Formula Review</text>
+      <text x="565" y="27" text-anchor="end" fill="#c084fc" font-family="monospace" font-size="12" font-weight="700">5.2 hrs today</text>
+    </g>
+
+    <text x="25" y="242" fill="rgba(255,255,255,0.4)" font-family="-apple-system, sans-serif" font-size="11">Ambient study indicators only. Zero chat distractions, zero meme forwards, zero doom-scrolling.</text>
+
+    <!-- Side Shareable Card Preview -->
+    <g transform="translate(670, 0)">
+      <rect width="370" height="270" rx="12" fill="rgba(24,10,38,0.7)" stroke="rgba(236,72,153,0.3)" strokeWidth="1"/>
+      <text x="25" y="36" fill="#f472b6" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">DAILY PROGRESS SHARE CARD</text>
+      
+      <g transform="translate(25, 60)">
+        <rect width="320" height="150" rx="10" fill="rgba(10,5,20,0.8)" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+        <text x="20" y="30" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">OJEE-TRACKER</text>
+        <text x="20" y="70" fill="#ffffff" font-family="monospace" font-size="36" font-weight="800">6.4 hrs</text>
+        <text x="20" y="92" fill="#00d2ff" font-family="-apple-system, sans-serif" font-size="12" font-weight="600">Deep Work Logged Today</text>
+        <text x="20" y="130" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">COUNTDOWN: 142 DAYS TO JEE</text>
+      </g>
+      <text x="25" y="242" fill="rgba(255,255,255,0.5)" font-family="monospace" font-size="10">ONE-CLICK EXPORT TO INSTAGRAM / DISCORD</text>
+    </g>
+  </g>
+
+  <!-- Bottom Branding -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // FRIENDS ACCOUNTABILITY &amp; SPRINT NETWORK</text>
+    <text x="1040" y="0" text-anchor="end" fill="#f472b6" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

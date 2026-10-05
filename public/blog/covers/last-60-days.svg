@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgSprint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#140608"/>
+      <stop offset="50%" stopColor="#220b12"/>
+      <stop offset="100%" stopColor="#080204"/>
+    </linearGradient>
+    <pattern id="gridSprint" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bgSprint)"/>
+  <rect width="1200" height="675" fill="url(#gridSprint)"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(244,63,94,0.12)" stroke="rgba(244,63,94,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#f43f5e"/>
+  <text x="114" y="91" fill="#fb7185" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="2">COUNTDOWN SPRINT</text>
+
+  <!-- Title -->
+  <text x="80" y="180" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">The Last 60 Days Protocol</text>
+  <text x="80" y="230" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="20" font-weight="400">Mock Cadence, Rapid Formula Audits &amp; High-Yield Cadence</text>
+
+  <!-- Visual Sprint Cards -->
+  <g transform="translate(80, 275)">
+    <!-- Big Countdown Dial Card -->
+    <rect width="320" height="270" rx="12" fill="rgba(35,12,20,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+    <text x="30" y="40" fill="#fb7185" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">DAYS REMAINING</text>
+    <text x="160" y="145" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="80" font-weight="900" letter-spacing="-2">60</text>
+    <text x="160" y="180" text-anchor="middle" fill="#f43f5e" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="3">CRITICAL SPRINT</text>
+    <rect x="30" y="210" width="260" height="26" rx="4" fill="rgba(244,63,94,0.15)" stroke="#f43f5e" strokeWidth="1"/>
+    <text x="160" y="227" text-anchor="middle" fill="#fb7185" font-family="monospace" font-size="10" font-weight="700">9 AM - 12 PM MOCK LOCK-IN</text>
+
+    <!-- 20/80 Rule & Phase Cards -->
+    <g transform="translate(350, 0)">
+      <rect width="690" height="270" rx="12" fill="rgba(35,12,20,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+      <text x="30" y="40" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">The 3-Phase Final Sprint Roadmap</text>
+
+      <g transform="translate(30, 70)">
+        <rect x="0" y="0" width="630" height="50" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+        <text x="20" y="30" fill="#fb7185" font-family="monospace" font-size="12" font-weight="700">DAYS 60 - 41</text>
+        <text x="130" y="30" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">High-Yield Subtopic Revision &amp; Alternate-Day Chapter Mocks</text>
+
+        <rect x="0" y="60" width="630" height="50" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+        <text x="20" y="90" fill="#fb7185" font-family="monospace" font-size="12" font-weight="700">DAYS 40 - 16</text>
+        <text x="130" y="90" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Full 3-Hour Simulated Mocks Every 48h + In-Depth Error Audits</text>
+
+        <rect x="0" y="120" width="630" height="50" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+        <text x="20" y="150" fill="#10b981" font-family="monospace" font-size="12" font-weight="700">DAYS 15 - 0</text>
+        <text x="130" y="150" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Short Notes, NCERT Biology/Inorganic Passes &amp; Formula Memory Lock</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Branding -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // EXAM COUNTDOWN &amp; AI DIAGNOSTICS</text>
+    <text x="1040" y="0" text-anchor="end" fill="#fb7185" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

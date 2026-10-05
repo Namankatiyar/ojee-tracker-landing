@@ -1,14 +1,17 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
 
 export default function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   if (!mounted) {
     return <div className="w-9 h-9" />;
@@ -36,22 +39,31 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       aria-label={label}
-      className="relative flex h-9 w-9 items-center justify-center rounded transition-colors text-foreground/60 hover:text-foreground"
+      className="relative flex h-9 w-9 items-center justify-center rounded transition-colors text-foreground/60 hover:text-foreground overflow-hidden cursor-pointer"
     >
-      <AnimatePresence mode="sync" initial={false}>
-        <motion.span
-          key={resolvedTheme}
-          initial={{ opacity: 0, rotate: -120, scale: 0.6 }}
-          animate={{ opacity: 1, rotate: 0, scale: 1 }}
-          exit={{ opacity: 0, rotate: 120, scale: 0.6 }}
-          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          className="absolute"
-        >
-          {isDark ? sunIcon : moonIcon}
-        </motion.span>
-      </AnimatePresence>
+      <span
+        className={`absolute transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          isDark
+            ? "opacity-100 rotate-0 scale-100"
+            : "opacity-0 rotate-90 scale-50 pointer-events-none"
+        }`}
+        aria-hidden={!isDark}
+      >
+        {sunIcon}
+      </span>
+      <span
+        className={`absolute transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          !isDark
+            ? "opacity-100 rotate-0 scale-100"
+            : "opacity-0 -rotate-90 scale-50 pointer-events-none"
+        }`}
+        aria-hidden={isDark}
+      >
+        {moonIcon}
+      </span>
     </button>
   );
 }

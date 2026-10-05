@@ -25,6 +25,9 @@ export default function ShareableCard({ hoursToday = 6.4, countdownDays = 142 }:
   };
 
   const handleExport = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText("https://tracker.ojeet.tech - OJEE-Tracker: 6.4H studied today | 142 days to JEE Main").catch(() => {});
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -150,7 +153,15 @@ export default function ShareableCard({ hoursToday = 6.4, countdownDays = 142 }:
           </div>
         </div>
 
-        <div className="bg-table-row-bg border-t border-subtle-border h-9">
+        <div className="bg-table-row-bg border-t border-subtle-border h-9 px-6 flex items-center justify-between text-[11px] font-mono text-muted-text">
+          <span>{countdownDays} days to JEE Main</span>
+          <button
+            type="button"
+            onClick={handleExport}
+            className="hover:text-foreground transition-colors cursor-pointer text-[10px]"
+          >
+            {copied ? "COPIED TO CLIPBOARD" : "SHARE PROGRESS"}
+          </button>
         </div>
       </motion.div>
     </div>

@@ -1,19 +1,28 @@
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
-import { Geist, Outfit } from "next/font/google";
+import Link from "next/link";
+import Script from "next/script";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -48,14 +57,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${outfit.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground selection:bg-azure selection:text-white font-sans overflow-x-hidden">
         <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
           <header className="sticky top-0 z-50 w-full border-b border-subtle-border bg-header-bg backdrop-blur-sm">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
               <div className="flex items-center gap-3">
-                <a href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
                   <Image
                     src="/logo.png"
                     alt="OJEE-Tracker logo"
@@ -67,15 +76,16 @@ export default function RootLayout({
                   <span className="font-display text-lg font-semibold tracking-tight">
                     OJEE-Tracker
                   </span>
-                </a>
+                </Link>
               </div>
 
               {/* Navigation Links for SEO & Quick Section Jumps */}
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-text" aria-label="Main Navigation">
-                <a href="#dashboard-preview" className="hover:text-foreground transition-colors">Features</a>
-                <a href="#community" className="hover:text-foreground transition-colors">Community</a>
-                <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-                <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+                <Link href="/#dashboard-preview" className="hover:text-foreground transition-colors">Features</Link>
+                <Link href="/#community" className="hover:text-foreground transition-colors">Community</Link>
+                <Link href="/#pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+                <Link href="/#faq" className="hover:text-foreground transition-colors">FAQ</Link>
+                <Link href="/blog" className="hover:text-foreground transition-colors text-azure font-semibold">Blog</Link>
               </nav>
 
               <div className="flex items-center gap-2">
@@ -115,6 +125,14 @@ export default function RootLayout({
           </header>
           <div className="flex flex-1 flex-col">{children}</div>
         </ThemeProvider>
+        {/* Cloudflare Web Analytics */}
+        <Script
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "5cbfd03d4862498d9160b33ce157301e"}'
+          strategy="afterInteractive"
+        />
+        {/* End Cloudflare Web Analytics */}
       </body>
     </html>
   );

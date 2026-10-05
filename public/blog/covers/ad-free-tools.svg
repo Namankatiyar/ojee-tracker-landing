@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgAdFree" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#021008"/>
+      <stop offset="50%" stopColor="#042010"/>
+      <stop offset="100%" stopColor="#010804"/>
+    </linearGradient>
+    <pattern id="gridAdFree" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bgAdFree)"/>
+  <rect width="1200" height="675" fill="url(#gridAdFree)"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#10b981"/>
+  <text x="114" y="91" fill="#10b981" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="2">DIGITAL WELLBEING</text>
+
+  <!-- Title -->
+  <text x="80" y="180" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">The Hidden Cost of "Free" Apps</text>
+  <text x="80" y="230" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="20" font-weight="400">Why Ad-Free &amp; Offline Study Command Centres Protect Deep Focus</text>
+
+  <!-- Visual Shield & Stats Grid -->
+  <g transform="translate(80, 275)">
+    <!-- Shield / Core Stat Card -->
+    <rect width="440" height="270" rx="12" fill="rgba(10,35,20,0.7)" stroke="rgba(16,185,129,0.3)" strokeWidth="1"/>
+    <circle cx="220" cy="95" r="50" fill="rgba(16,185,129,0.1)" stroke="#10b981" strokeWidth="2"/>
+    <path d="M 220 65 L 255 77 V 105 C 255 125 220 135 220 135 C 220 135 185 125 185 105 V 77 Z" fill="none" stroke="#10b981" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M 208 98 L 216 106 L 232 90" fill="none" stroke="#34d399" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+
+    <text x="220" y="175" text-anchor="middle" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="20" font-weight="700">100% Ad-Free &amp; Private</text>
+    <text x="220" y="200" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="11">ZERO TELEMETRY · ZERO TRACKING COOKIES</text>
+    <text x="220" y="228" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="11">Your preparation data never leaves your device storage.</text>
+
+    <!-- Side Research Metrics -->
+    <g transform="translate(470, 0)">
+      <rect width="570" height="125" rx="12" fill="rgba(10,35,20,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+      <text x="25" y="32" fill="#f43f5e" font-family="monospace" font-size="11" font-weight="700">THE CONTEXT SWITCHING PENALTY</text>
+      <text x="25" y="65" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="28" font-weight="800">23 Mins 15 Secs</text>
+      <text x="25" y="95" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="12">Average time to regain peak cognitive flow after a single 5-second ad popup (UC Irvine study).</text>
+
+      <g transform="translate(0, 145)">
+        <rect width="570" height="125" rx="12" fill="rgba(10,35,20,0.7)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
+        <text x="25" y="32" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">THE OFFLINE-FIRST ADVANTAGE</text>
+        <text x="25" y="65" fill="#34d399" font-family="-apple-system, sans-serif" font-size="28" font-weight="800">Zero Network Lag</text>
+        <text x="25" y="95" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="12">Operate uninterrupted in Airplane Mode. All syllabus and time logs persist in client-side IndexedDB.</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Branding -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // 100% COMPLETELY AD-FREE FOR ALL ASPIRANTS</text>
+    <text x="1040" y="0" text-anchor="end" fill="#10b981" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

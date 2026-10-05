@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import ChartJS from "chart.js/auto";
-import type { ChartConfiguration, TooltipItem } from "chart.js";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 
@@ -45,13 +43,208 @@ const initialSyllabusItems = [
 ];
 
 type ReportMetric = "hours" | "weekly";
-type ReportChart = {
-  type: "line" | "bar";
-  labels: string[];
-  datasets: ChartConfiguration<"line" | "bar", number[], string>["data"]["datasets"];
-  max: number;
-  stacked: boolean;
-};
+
+const dailyHoursData = [
+  { day: "Mon", hours: 8.5, physics: 3.5, chemistry: 2.5, maths: 2.5 },
+  { day: "Tue", hours: 9.2, physics: 4.0, chemistry: 3.2, maths: 2.0 },
+  { day: "Wed", hours: 6.0, physics: 2.5, chemistry: 2.0, maths: 1.5 },
+  { day: "Thu", hours: 7.8, physics: 3.0, chemistry: 2.8, maths: 2.0 },
+  { day: "Fri", hours: 10.5, physics: 4.5, chemistry: 3.5, maths: 2.5 },
+  { day: "Sat", hours: 12.0, physics: 5.0, chemistry: 4.0, maths: 3.0 },
+  { day: "Sun", hours: 8.4, physics: 3.4, chemistry: 3.0, maths: 2.0 },
+];
+
+function StudyHoursChart({ metric, isDark }: { metric: ReportMetric; isDark: boolean }) {
+  const width = 500;
+  const height = 120;
+  const topY = 16;
+  const bottomY = 96;
+  const graphHeight = bottomY - topY;
+  const maxVal = 14;
+
+  const leftX = 36;
+  const rightX = 476;
+  const graphWidth = rightX - leftX;
+  const colStep = graphWidth / 7;
+
+  const getX = (idx: number) => leftX + (idx + 0.5) * colStep;
+  const getY = (val: number) => bottomY - (val / maxVal) * graphHeight;
+
+  const tickColor = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.45)";
+  const gridColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.06)";
+  const borderColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+
+  const points = dailyHoursData.map((d, i) => ({ x: getX(i), y: getY(d.hours) }));
+
+  let linePath = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i === 0 ? 0 : i - 1];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2] || p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    linePath += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+  }
+
+  const areaPath = `${linePath} L ${points[points.length - 1].x} ${bottomY} L ${points[0].x} ${bottomY} Z`;
+
+  return (
+    <svg
+      role="img"
+      aria-label="Study hours visualization chart displaying daily hours between 6.0 and 12.0 hours across Physics, Chemistry, and Mathematics"
+      viewBox={`0 0 ${width} ${height}`}
+      className="w-full h-full select-none"
+    >
+      <defs>
+        <linearGradient id="chartLineGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.32" />
+          <stop offset="60%" stopColor="#10b981" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+
+      {[14, 7, 0].map((val) => {
+        const y = getY(val);
+        return (
+          <g key={val}>
+            <line
+              x1={leftX}
+              y1={y}
+              x2={rightX}
+              y2={y}
+              stroke={gridColor}
+              strokeWidth="1"
+            />
+            <text
+              x={leftX - 8}
+              y={y + 3}
+              textAnchor="end"
+              fill={tickColor}
+              fontSize="9"
+              fontFamily="monospace"
+            >
+              {val}h
+            </text>
+          </g>
+        );
+      })}
+
+      <line
+        x1={leftX}
+        y1={bottomY}
+        x2={rightX}
+        y2={bottomY}
+        stroke={borderColor}
+        strokeWidth="1"
+      />
+
+      {dailyHoursData.map((d, i) => (
+        <text
+          key={d.day}
+          x={getX(i)}
+          y={height - 8}
+          textAnchor="middle"
+          fill={tickColor}
+          fontSize="9"
+          fontFamily="monospace"
+        >
+          {d.day}
+        </text>
+      ))}
+
+      {metric === "hours" && (
+        <g>
+          <path d={areaPath} fill="url(#chartLineGradient)" />
+          <path
+            d={linePath}
+            fill="none"
+            stroke="#6366f1"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {dailyHoursData.map((d, i) => {
+            const pt = points[i];
+            return (
+              <g key={d.day} className="cursor-pointer group">
+                <circle
+                  cx={pt.x}
+                  cy={pt.y}
+                  r="3.5"
+                  fill={isDark ? "#0a0a0a" : "#ffffff"}
+                  stroke="#6366f1"
+                  strokeWidth="1.5"
+                />
+                <title>{`${d.day}: ${d.hours}h`}</title>
+              </g>
+            );
+          })}
+        </g>
+      )}
+
+      {metric === "weekly" && (
+        <g>
+          <g transform={`translate(${rightX - 170}, 6)`}>
+            <circle cx="0" cy="4" r="3" fill="#6366f1" />
+            <text x="6" y="7" fill={tickColor} fontSize="8" fontFamily="monospace">Physics</text>
+            <circle cx="52" cy="4" r="3" fill="#10b981" />
+            <text x="58" y="7" fill={tickColor} fontSize="8" fontFamily="monospace">Chemistry</text>
+            <circle cx="114" cy="4" r="3" fill="#f59e0b" />
+            <text x="120" y="7" fill={tickColor} fontSize="8" fontFamily="monospace">Maths</text>
+          </g>
+
+          {dailyHoursData.map((d, i) => {
+            const barW = 20;
+            const barX = getX(i) - barW / 2;
+
+            const hMaths = (d.maths / maxVal) * graphHeight;
+            const yMaths = bottomY - hMaths;
+
+            const hChem = (d.chemistry / maxVal) * graphHeight;
+            const yChem = yMaths - hChem;
+
+            const hPhys = (d.physics / maxVal) * graphHeight;
+            const yPhys = yChem - hPhys;
+
+            return (
+              <g key={d.day} className="cursor-pointer">
+                <rect
+                  x={barX}
+                  y={yMaths}
+                  width={barW}
+                  height={hMaths}
+                  fill="#f59e0b"
+                />
+                <rect
+                  x={barX}
+                  y={yChem}
+                  width={barW}
+                  height={hChem}
+                  fill="#10b981"
+                />
+                <rect
+                  x={barX}
+                  y={yPhys}
+                  width={barW}
+                  height={hPhys}
+                  rx="2"
+                  ry="2"
+                  fill="#6366f1"
+                />
+                <title>{`${d.day}: ${d.hours}h (Physics ${d.physics}h, Chemistry ${d.chemistry}h, Maths ${d.maths}h)`}</title>
+              </g>
+            );
+          })}
+        </g>
+      )}
+    </svg>
+  );
+}
 
 function BentoCard({
   children,
@@ -72,8 +265,8 @@ function BentoCard({
     <motion.article
       id={featureId}
       aria-labelledby={ariaLabelledBy}
-      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }}
-      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
+      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: reduceMotion ? 0.15 : 0.55, delay: reduceMotion ? 0 : index * 0.055, ease: easeOutExpo }}
       whileHover={reduceMotion ? undefined : { y: -4, scale: 1.01, borderColor: "rgba(0, 127, 255, 0.38)" }}
@@ -118,8 +311,6 @@ export default function BentoGrid() {
   const [aiInput, setAiInput] = useState("");
 
   const [reportMetric, setReportMetric] = useState<ReportMetric>("hours");
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const chartInstanceRef = useRef<ChartJS | null>(null);
 
   const toggleSyllabusNode = (itemIndex: number, nodeIndex: number) => {
     setSyllabusItems((prev) =>
@@ -130,155 +321,6 @@ export default function BentoGrid() {
       )
     );
   };
-
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    if (chartInstanceRef.current) {
-      chartInstanceRef.current.destroy();
-    }
-
-    const ctx = chartRef.current.getContext("2d");
-    if (!ctx) return;
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, 140);
-    gradient.addColorStop(0, "rgba(99, 102, 241, 0.28)");
-    gradient.addColorStop(0.5, "rgba(16, 185, 129, 0.16)");
-    gradient.addColorStop(1, "rgba(245, 158, 11, 0.0)");
-
-    const tickColor = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.45)";
-    const borderColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
-    const gridColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.06)";
-    const legendColor = isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.55)";
-    const tooltipBg = isDark ? "#000000" : "#ffffff";
-    const tooltipTitle = isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.55)";
-    const tooltipBody = isDark ? "#ffffff" : "#0a0a0a";
-    const tooltipBorder = isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.12)";
-    const pointBg = isDark ? "#000000" : "#ffffff";
-
-    const dataMap: Record<ReportMetric, ReportChart> = {
-      hours: {
-        type: "line",
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        datasets: [
-          {
-            label: "Study Hours",
-            data: [8.5, 9.2, 6.0, 7.8, 10.5, 12.0, 8.4],
-            borderColor: "#6366f1",
-            borderWidth: 2,
-            backgroundColor: gradient,
-            fill: true,
-            tension: 0.25,
-            pointBackgroundColor: pointBg,
-            pointBorderColor: "#6366f1",
-            pointBorderWidth: 1.5,
-            pointRadius: 3.5,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: "#6366f1",
-            pointHoverBorderColor: isDark ? "#ffffff" : "#0a0a0a",
-          }
-        ],
-        max: 14,
-        stacked: false
-      },
-      weekly: {
-        type: "bar",
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        datasets: [
-          {
-            label: "Physics",
-            data: [3.5, 4.0, 2.5, 3.0, 4.5, 5.0, 3.4],
-            backgroundColor: "#6366f1",
-            borderRadius: 2
-          },
-          {
-            label: "Chemistry",
-            data: [2.5, 3.2, 2.0, 2.8, 3.5, 4.0, 3.0],
-            backgroundColor: "#10b981",
-            borderRadius: 2
-          },
-          {
-            label: "Maths",
-            data: [2.5, 2.0, 1.5, 2.0, 2.5, 3.0, 2.0],
-            backgroundColor: "#f59e0b",
-            borderRadius: 2
-          }
-        ],
-        max: 14,
-        stacked: true
-      }
-    };
-
-    const currentData = dataMap[reportMetric];
-
-    chartInstanceRef.current = new ChartJS(ctx, {
-      type: currentData.type,
-      data: {
-        labels: currentData.labels,
-        datasets: currentData.datasets
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 0 },
-        layout: {
-          padding: { top: 10, right: 10, left: 0, bottom: 0 }
-        },
-        scales: {
-          x: {
-            stacked: currentData.stacked,
-            grid: { display: false },
-            ticks: { color: tickColor, font: { family: "monospace", size: 9 } },
-            border: { color: borderColor }
-          },
-          y: {
-            stacked: currentData.stacked,
-            min: 0,
-            max: currentData.max,
-            grid: { color: gridColor },
-            ticks: {
-              color: tickColor,
-              font: { family: "monospace", size: 9 },
-              callback: (val: string | number) => `${val}h`
-            },
-            border: { display: false }
-          }
-        },
-        plugins: {
-          legend: {
-            display: currentData.stacked,
-            position: "top",
-            align: "end",
-            labels: {
-              color: legendColor,
-              boxWidth: 8,
-              boxHeight: 8,
-              usePointStyle: true,
-              font: { family: "monospace", size: 9 }
-            }
-          },
-          tooltip: {
-            backgroundColor: tooltipBg,
-            titleColor: tooltipTitle,
-            bodyColor: tooltipBody,
-            borderColor: tooltipBorder,
-            borderWidth: 1,
-            padding: 8,
-            displayColors: currentData.stacked,
-            callbacks: {
-              label: (context: TooltipItem<"line" | "bar">) => `${context.dataset.label}: ${context.parsed.y}h`
-            }
-          }
-        }
-      }
-    });
-
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-    };
-  }, [reportMetric, isDark]);
 
   useEffect(() => {
     if (!isClockRunning) return;
@@ -516,8 +558,8 @@ export default function BentoGrid() {
               aria-live="polite"
               aria-atomic="true"
               aria-label={`Current timer display: ${clockTime}`}
-              initial={reduceMotion ? { opacity: 0.7 } : { opacity: 0, y: -8, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={reduceMotion ? { opacity: 0.7 } : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
               className="text-4xl font-mono font-bold tracking-tight text-foreground mb-2"
             >
               {clockTime}
@@ -798,8 +840,8 @@ export default function BentoGrid() {
               <motion.div
                 key={`${msg.sender}-${idx}-${msg.text}`}
                 layout
-                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: msg.sender === "agent" ? -14 : 14, filter: "blur(4px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: msg.sender === "agent" ? -14 : 14 }}
+                animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.97 }}
                 className={`flex flex-col gap-0.5 p-2 rounded ${msg.sender === "agent" ? " bg-foreground/5 text-foreground/80 border-l border-azure-dynamic/50" : "bg-azure-dynamic/10 text-foreground/90 self-end max-w-[90%]"}`}
               >
@@ -888,17 +930,12 @@ export default function BentoGrid() {
           </div>
 
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0.55, y: 8, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            initial={reduceMotion ? false : { opacity: 0.55, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0.12 : 0.28, ease: easeOutExpo }}
             className="relative h-32 my-3 w-full"
           >
-            <canvas
-              ref={chartRef}
-              role="img"
-              aria-label="Study hours visualization chart displaying daily hours between 6.0 and 12.0 hours across Physics, Chemistry, and Mathematics"
-              className="w-full h-full"
-            />
+            <StudyHoursChart metric={reportMetric} isDark={isDark} />
           </motion.div>
 
           <div className="flex justify-between items-center text-[10px] text-muted-text-strong pt-2 border-t border-subtle-border">

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bgBalance" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#080703"/>
+      <stop offset="50%" stopColor="#1c1405"/>
+      <stop offset="100%" stopColor="#040301"/>
+    </linearGradient>
+    <pattern id="gridBalance" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bgBalance)"/>
+  <rect width="1200" height="675" fill="url(#gridBalance)"/>
+
+  <!-- Tag Pill -->
+  <rect x="80" y="70" width="220" height="32" rx="16" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.4)" strokeWidth="1"/>
+  <circle cx="100" cy="86" r="4" fill="#f59e0b"/>
+  <text x="114" y="91" fill="#fbbf24" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="2">PERCENTILE MAXIMIZATION</text>
+
+  <!-- Title -->
+  <text x="80" y="180" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">The Subject Balance Formula</text>
+  <text x="80" y="230" fill="rgba(255,255,255,0.6)" font-family="-apple-system, sans-serif" font-size="20" font-weight="400">Escaping the Favorite Subject Trap &amp; Balancing Physics, Chemistry &amp; Maths</text>
+
+  <!-- Visual 3-Way Subject Distribution Matrix -->
+  <g transform="translate(80, 275)">
+    <!-- Subject 1: Physics -->
+    <rect width="320" height="270" rx="12" fill="rgba(20,20,45,0.8)" stroke="rgba(99,102,241,0.3)" strokeWidth="1"/>
+    <text x="24" y="36" fill="#818cf8" font-family="monospace" font-size="12" font-weight="700">PHYSICS ALLOCATION</text>
+    <text x="24" y="80" fill="#ffffff" font-family="monospace" font-size="48" font-weight="800">28.4h</text>
+    <text x="24" y="105" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">45% of weekly deep work</text>
+    <rect x="24" y="130" width="272" height="8" rx="4" fill="rgba(255,255,255,0.1)"/>
+    <rect x="24" y="130" width="122" height="8" rx="4" fill="#6366f1"/>
+    <text x="24" y="165" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Morning Peak Energy Block</text>
+    <text x="24" y="185" fill="rgba(255,255,255,0.4)" font-family="-apple-system, sans-serif" font-size="11">Mechanics, Electrodynamics, Optics</text>
+    <text x="24" y="235" fill="#818cf8" font-family="monospace" font-size="11">SCORE POTENTIAL: 80+ / 100</text>
+
+    <!-- Subject 2: Chemistry -->
+    <g transform="translate(360, 0)">
+      <rect width="320" height="270" rx="12" fill="rgba(10,35,25,0.8)" stroke="rgba(16,185,129,0.3)" strokeWidth="1"/>
+      <text x="24" y="36" fill="#34d399" font-family="monospace" font-size="12" font-weight="700">CHEMISTRY ALLOCATION</text>
+      <text x="24" y="80" fill="#ffffff" font-family="monospace" font-size="48" font-weight="800">20.0h</text>
+      <text x="24" y="105" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">32% of weekly deep work</text>
+      <rect x="24" y="130" width="272" height="8" rx="4" fill="rgba(255,255,255,0.1)"/>
+      <rect x="24" y="130" width="87" height="8" rx="4" fill="#10b981"/>
+      <text x="24" y="165" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Afternoon NCERT &amp; PYQ Block</text>
+      <text x="24" y="185" fill="rgba(255,255,255,0.4)" font-family="-apple-system, sans-serif" font-size="11">Physical, Inorganic &amp; Organic GOC</text>
+      <text x="24" y="235" fill="#34d399" font-family="monospace" font-size="11">HIGHEST ROI MARKS ENGINE</text>
+    </g>
+
+    <!-- Subject 3: Maths -->
+    <g transform="translate(720, 0)">
+      <rect width="320" height="270" rx="12" fill="rgba(35,25,10,0.8)" stroke="rgba(245,158,11,0.3)" strokeWidth="1"/>
+      <text x="24" y="36" fill="#fbbf24" font-family="monospace" font-size="12" font-weight="700">MATHEMATICS ALLOCATION</text>
+      <text x="24" y="80" fill="#ffffff" font-family="monospace" font-size="48" font-weight="800">14.0h</text>
+      <text x="24" y="105" fill="rgba(255,255,255,0.5)" font-family="-apple-system, sans-serif" font-size="12">23% of weekly deep work</text>
+      <rect x="24" y="130" width="272" height="8" rx="4" fill="rgba(255,255,255,0.1)"/>
+      <rect x="24" y="130" width="62" height="8" rx="4" fill="#f59e0b"/>
+      <text x="24" y="165" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Evening Intensive Problem Drill</text>
+      <text x="24" y="185" fill="rgba(255,255,255,0.4)" font-family="-apple-system, sans-serif" font-size="11">Calculus, Vectors 3D, Coordinate</text>
+      <text x="24" y="235" fill="#fbbf24" font-family="monospace" font-size="11">CUTOFF SECURITY ENGINE</text>
+    </g>
+  </g>
+
+  <!-- Bottom Branding -->
+  <g transform="translate(80, 615)">
+    <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11">OJEE-TRACKER // WEEKLY SUBJECT BREAKDOWN DONUT &amp; BAR ANALYTICS</text>
+    <text x="1040" y="0" text-anchor="end" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="700">HTTPS://TRACKER.OJEET.TECH</text>
+  </g>
+</svg>

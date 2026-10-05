@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 const GITHUB_URL = "https://github.com/Namankatiyar/ojeet-tracker";
